@@ -1,5 +1,3 @@
-# Hospital Management System
-
 A comprehensive hospital management system built with NestJS, PostgreSQL, and TypeORM. This system provides APIs for managing patients, doctors, appointments, medical records, and hospital operations.
 
 ## Features

@@ -16,3 +16,12 @@ export class BackupService {
     if (!fs.existsSync(backupDir)) {
       fs.mkdirSync(backupDir, { recursive: true });
     }
+    const command = `pg_dump -U ${this.config.get('DB_USERNAME')} -h ${this.config.get('DB_HOST')} ${this.config.get('DB_NAME')} > ${backupPath}`;
+
+    return new Promise((resolve, reject) => {
+      exec(command, (error) => {
+        if (error) reject(`Backup failed: ${error.message}`);
+        else this.encryptBackup(backupPath).then(resolve).catch(reject);
+      });
+    });
+  }

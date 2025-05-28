@@ -25,3 +25,9 @@ export class BackupService {
       });
     });
   }
+  private async encryptBackup(filePath: string) {
+    // Implement AES-256 encryption (HIPAA requirement)
+    const { encryptFile } = await import('crypto-utils');
+    return encryptFile(filePath, this.config.get('BACKUP_ENCRYPTION_KEY'));
+  }
+}

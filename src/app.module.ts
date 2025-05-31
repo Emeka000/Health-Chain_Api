@@ -7,6 +7,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { BillingModule } from './modules/billing/billing.module';
 import { MedicalStaffModule } from './medical-staff/medical-staff.module';
+import { DataQualityModule } from './data-quality/data-quality.module';
 import {
   getDatabaseConfig,
   getAuditDatabaseConfig,
@@ -68,6 +69,7 @@ import * as compression from 'compression';
     // Application modules
     BillingModule,
     MedicalStaffModule,
+    DataQualityModule,
   ],
   controllers: [AppController],
   providers: [AppService, EncryptionService, AuditService],

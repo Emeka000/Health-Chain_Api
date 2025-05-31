@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, Index } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class CreateHIPAATables1703168400000 implements MigrationInterface {
   name = 'CreateHIPAATables1703168400000';
@@ -260,71 +260,39 @@ export class CreateHIPAATables1703168400000 implements MigrationInterface {
       true,
     );
 
-    // Create indexes for audit logs
-    await queryRunner.createIndex(
-      'audit_logs',
-      new Index({
-        name: 'IDX_audit_logs_user_created',
-        columnNames: ['userId', 'createdAt'],
-      }),
-    );
+    // Create indexes for audit logs using SQL commands
+    await queryRunner.query(`
+      CREATE INDEX "IDX_audit_logs_user_created" ON "audit_logs" ("userId", "createdAt");
+    `);
 
-    await queryRunner.createIndex(
-      'audit_logs',
-      new Index({
-        name: 'IDX_audit_logs_entity_created',
-        columnNames: ['entityType', 'entityId', 'createdAt'],
-      }),
-    );
+    await queryRunner.query(`
+      CREATE INDEX "IDX_audit_logs_entity_created" ON "audit_logs" ("entityType", "entityId", "createdAt");
+    `);
 
-    await queryRunner.createIndex(
-      'audit_logs',
-      new Index({
-        name: 'IDX_audit_logs_action_created',
-        columnNames: ['action', 'createdAt'],
-      }),
-    );
+    await queryRunner.query(`
+      CREATE INDEX "IDX_audit_logs_action_created" ON "audit_logs" ("action", "createdAt");
+    `);
 
-    await queryRunner.createIndex(
-      'audit_logs',
-      new Index({
-        name: 'IDX_audit_logs_phi_access',
-        columnNames: ['isPHIAccess', 'createdAt'],
-      }),
-    );
+    await queryRunner.query(`
+      CREATE INDEX "IDX_audit_logs_phi_access" ON "audit_logs" ("isPHIAccess", "createdAt");
+    `);
 
-    // Create indexes for doctors_hipaa
-    await queryRunner.createIndex(
-      'doctors_hipaa',
-      new Index({
-        name: 'IDX_doctors_hipaa_employee_id',
-        columnNames: ['employeeId'],
-      }),
-    );
+    // Create indexes for doctors_hipaa using SQL commands
+    await queryRunner.query(`
+      CREATE INDEX "IDX_doctors_hipaa_employee_id" ON "doctors_hipaa" ("employeeId");
+    `);
 
-    await queryRunner.createIndex(
-      'doctors_hipaa',
-      new Index({
-        name: 'IDX_doctors_hipaa_email_hash',
-        columnNames: ['emailHash'],
-      }),
-    );
+    await queryRunner.query(`
+      CREATE INDEX "IDX_doctors_hipaa_email_hash" ON "doctors_hipaa" ("emailHash");
+    `);
 
-    await queryRunner.createIndex(
-      'doctors_hipaa',
-      new Index({
-        name: 'IDX_doctors_hipaa_department',
-        columnNames: ['departmentId'],
-      }),
-    );
+    await queryRunner.query(`
+      CREATE INDEX "IDX_doctors_hipaa_department" ON "doctors_hipaa" ("departmentId");
+    `);
 
-    await queryRunner.createIndex(
-      'doctors_hipaa',
-      new Index({
-        name: 'IDX_doctors_hipaa_status',
-        columnNames: ['status'],
-      }),
-    );
+    await queryRunner.query(`
+      CREATE INDEX "IDX_doctors_hipaa_status" ON "doctors_hipaa" ("status");
+    `);
 
     // Enable Row Level Security (RLS) for HIPAA compliance
     await queryRunner.query('ALTER TABLE doctors_hipaa ENABLE ROW LEVEL SECURITY');

@@ -11,8 +11,8 @@ export class EncryptionService {
 
   constructor(private configService: ConfigService) {
     this.algorithm = this.configService.get('ENCRYPTION_ALGORITHM', 'aes-256-gcm');
-    this.key = this.configService.get('FIELD_ENCRYPTION_KEY');
-    this.phiKey = this.configService.get('PHI_ENCRYPTION_KEY');
+    this.key = this.configService.get<string>('FIELD_ENCRYPTION_KEY') || '';
+    this.phiKey = this.configService.get<string>('PHI_ENCRYPTION_KEY') || '';
 
     if (!this.key || !this.phiKey) {
       throw new Error('Encryption keys must be configured for HIPAA compliance');
@@ -56,15 +56,14 @@ export class EncryptionService {
   }
 
   /**
-   * Encrypt general sensitive data
+   * Encrypt general sensitive data using modern crypto methods
    */
   encrypt(data: string): string {
     if (!data) return data;
 
     try {
       const iv = crypto.randomBytes(16);
-      const cipher = crypto.createCipher(this.algorithm, this.key);
-      cipher.setAAD(Buffer.from('healthchain-hipaa', 'utf8'));
+      const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(this.key, 'hex'), iv);
       
       let encrypted = cipher.update(data, 'utf8', 'hex');
       encrypted += cipher.final('hex');
@@ -78,7 +77,7 @@ export class EncryptionService {
   }
 
   /**
-   * Decrypt general sensitive data
+   * Decrypt general sensitive data using modern crypto methods
    */
   decrypt(encryptedData: string): string {
     if (!encryptedData || encryptedData.startsWith('PHI:')) {
@@ -95,8 +94,7 @@ export class EncryptionService {
       const iv = Buffer.from(ivHex, 'hex');
       const authTag = Buffer.from(authTagHex, 'hex');
       
-      const decipher = crypto.createDecipher(this.algorithm, this.key);
-      decipher.setAAD(Buffer.from('healthchain-hipaa', 'utf8'));
+      const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(this.key, 'hex'), iv);
       decipher.setAuthTag(authTag);
       
       let decrypted = decipher.update(encrypted, 'hex', 'utf8');

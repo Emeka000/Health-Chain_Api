@@ -11,7 +11,7 @@ import { getDatabaseConfig, getAuditDatabaseConfig } from './config/database.con
 import { EncryptionService } from './security/encryption.service';
 import { AuditService } from './audit/audit.service';
 import { AuditLog } from './audit/audit-log.entity';
-import * as helmet from 'helmet';
+import helmet from 'helmet';
 import * as compression from 'compression';
 
 @Module({
@@ -38,13 +38,21 @@ import * as compression from 'compression';
       inject: [ConfigService],
     }),
     
-    // Rate limiting for security
+    // Rate limiting for security - Fixed API for v6.x
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        ttl: parseInt(configService.get('THROTTLE_TTL', '60'), 10),
-        limit: parseInt(configService.get('THROTTLE_LIMIT', '10'), 10),
-      }),
+      useFactory: (configService: ConfigService) => [
+        {
+          name: 'short',
+          ttl: parseInt(configService.get('THROTTLE_TTL', '60'), 10) * 1000,
+          limit: parseInt(configService.get('THROTTLE_LIMIT', '10'), 10),
+        },
+        {
+          name: 'long',
+          ttl: parseInt(configService.get('RATE_LIMIT_TTL', '60'), 10) * 1000,
+          limit: parseInt(configService.get('RATE_LIMIT_LIMIT', '100'), 10),
+        },
+      ],
       inject: [ConfigService],
     }),
     

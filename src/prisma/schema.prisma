@@ -1,0 +1,58 @@
+// src/prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Patient {
+  id             Int       @id @default(autoincrement())
+  name           String
+  age            Int
+  gender         String
+  email          String    @unique
+  phone          String?
+  address        String?
+  admitted       Boolean   @default(false)
+  admissionDate  DateTime?
+  dischargeDate  DateTime?
+  diagnosis      Diagnosis[]
+  medication     Medication[]
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Diagnosis {
+  id         Int       @id @default(autoincrement())
+  patient    Patient   @relation(fields: [patientId], references: [id])
+  patientId  Int
+  summary    String
+  details    String?
+  createdAt  DateTime  @default(now())
+}
+
+model Medication {
+  id          Int       @id @default(autoincrement())
+  patient     Patient   @relation(fields: [patientId], references: [id])
+  patientId   Int
+  name        String
+  dosage      String
+  frequency   String
+  startDate   DateTime
+  endDate     DateTime?
+  createdAt   DateTime  @default(now())
+}
+
+model AuditLog {
+  id          Int       @id @default(autoincrement())
+  action      String
+  userId      Int?
+  patientId   Int?
+  description String
+  timestamp   DateTime  @default(now())
+}

@@ -15,6 +15,7 @@ import {
 import { EncryptionService } from './security/encryption.service';
 import { AuditService } from './audit/audit.service';
 import { AuditLog } from './audit/audit-log.entity';
+import { LabModule } from './lab/lab.module';
 import { PharmacyModule } from './pharmacy/pharmacy.module';
 import helmet from 'helmet';
 import * as compression from 'compression';
@@ -73,6 +74,7 @@ import * as compression from 'compression';
 feat/pharmacy-lab-management-apis-39
     PharmacyModule,
     DataQualityModule,
+    LabModule,
   ],
   controllers: [AppController],
   providers: [AppService, EncryptionService, AuditService],

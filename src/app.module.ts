@@ -36,6 +36,7 @@ import { QualityMetricsModule } from "./modules/quality-metrics/quality-metrics.
 import { PatientsModule } from "./modules/patients/patients.module"
 import { DepartmentsModule } from "./modules/departments/departments.module"
 import { AuditModule } from "./modules/audit/audit.module"
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -95,6 +96,7 @@ feat/pharmacy-lab-management-apis-39
     PharmacysModule,
     MarModule,
     EmergencyModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService, EncryptionService, AuditService],

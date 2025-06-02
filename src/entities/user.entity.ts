@@ -4,9 +4,12 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { UserRole } from '../auth/enum/user-role.enum';
+import { Department } from 'src/medical-staff/entities/department.entity';
+import { Role } from 'src/role/entities/role.entity';
 
 @Entity('users')
 export class User {
@@ -71,4 +74,7 @@ export class User {
 
   @Column({ type: 'jsonb', nullable: true })
   securityQuestions: { question: string; answer: string }[];
+
+  @ManyToOne(() => Department)
+  department: Department;
 }

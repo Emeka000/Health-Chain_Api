@@ -8,10 +8,16 @@ import { AppService } from './app.service';
 import { BillingModule } from './modules/billing/billing.module';
 import { MedicalStaffModule } from './medical-staff/medical-staff.module';
 import { DataQualityModule } from './data-quality/data-quality.module';
-import { getDatabaseConfig, getAuditDatabaseConfig } from './config/database.config';
+import {
+  getDatabaseConfig,
+  getAuditDatabaseConfig,
+} from './config/database.config';
 import { EncryptionService } from './security/encryption.service';
 import { AuditService } from './audit/audit.service';
 import { AuditLog } from './audit/audit-log.entity';
+import { LabModule } from './lab/lab.module';
+import { PharmacyModule } from './pharmacy/pharmacy.module';
+import { PharmacysModule } from './pharmacys/pharmacys.module';
 import helmet from 'helmet';
 import * as compression from 'compression';
 
@@ -37,14 +43,14 @@ import { AuditModule } from "./modules/audit/audit.module"
       cache: true,
       expandVariables: true,
     }),
-    
+
     // Main database with HIPAA compliance
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: getDatabaseConfig,
       inject: [ConfigService],
     }),
-    
+
     // Separate audit database
     TypeOrmModule.forRootAsync({
       name: 'audit',
@@ -52,7 +58,7 @@ import { AuditModule } from "./modules/audit/audit.module"
       useFactory: getAuditDatabaseConfig,
       inject: [ConfigService],
     }),
-    
+
     // Rate limiting for security - Fixed API for v6.x
     ThrottlerModule.forRootAsync({
       imports: [ConfigModule],
@@ -70,24 +76,24 @@ import { AuditModule } from "./modules/audit/audit.module"
       ],
       inject: [ConfigService],
     }),
-    
+
     // Scheduled tasks for maintenance
     ScheduleModule.forRoot(),
-    
+
     // Audit log repository
     TypeOrmModule.forFeature([AuditLog], 'audit'),
-    
+
     // Application modules
     BillingModule,
     MedicalStaffModule,
+feat/pharmacy-lab-management-apis-39
+    PharmacyModule,
     DataQualityModule,
+    LabModule,
+    PharmacysModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    EncryptionService,
-    AuditService,
-  ],
+  providers: [AppService, EncryptionService, AuditService],
   exports: [EncryptionService, AuditService],
 })
 export class AppModule implements NestModule {
@@ -101,7 +107,7 @@ export class AppModule implements NestModule {
               defaultSrc: ["'self'"],
               styleSrc: ["'self'", "'unsafe-inline'"],
               scriptSrc: ["'self'"],
-              imgSrc: ["'self'", "data:", "https:"],
+              imgSrc: ["'self'", 'data:', 'https:'],
             },
           },
           hsts: {

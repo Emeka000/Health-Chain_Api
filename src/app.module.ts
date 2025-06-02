@@ -19,6 +19,7 @@ import { LabModule } from './lab/lab.module';
 import { PharmacyModule } from './pharmacy/pharmacy.module';
 import { PharmacysModule } from './pharmacys/pharmacys.module';
 import { MarModule } from './mar/mar.module';
+import { EmergencyModule } from './emergency/emergency.module';
 import helmet from 'helmet';
 import * as compression from 'compression';
 
@@ -79,6 +80,7 @@ feat/pharmacy-lab-management-apis-39
     LabModule,
     PharmacysModule,
     MarModule,
+    EmergencyModule,
   ],
   controllers: [AppController],
   providers: [AppService, EncryptionService, AuditService],

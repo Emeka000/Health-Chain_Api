@@ -2,6 +2,8 @@ import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { Injectable } from "@nestjs/common"
+
 
 export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOptions => {
   const isProduction = configService.get('NODE_ENV') === 'production';
@@ -141,3 +143,23 @@ export const getAuditDatabaseConfig = (configService: ConfigService): TypeOrmMod
     name: 'audit',
   };
 }; 
+@Injectable()
+export class DatabaseConfig implements TypeOrmOptionsFactory {
+  constructor(private configService: ConfigService) {}
+
+  createTypeOrmOptions(): TypeOrmModuleOptions {
+    return {
+      type: "postgres",
+      host: this.configService.get("DB_HOST", "localhost"),
+      port: this.configService.get("DB_PORT", 5432),
+      username: this.configService.get("DB_USERNAME", "postgres"),
+      password: this.configService.get("DB_PASSWORD", "password"),
+      database: this.configService.get("DB_NAME", "healthcare_nursing"),
+      entities: [__dirname + "/../**/*.entity{.ts,.js}"],
+      migrations: [__dirname + "/../database/migrations/*{.ts,.js}"],
+      synchronize: this.configService.get("NODE_ENV") === "development",
+      logging: this.configService.get("NODE_ENV") === "development",
+      ssl: this.configService.get("NODE_ENV") === "production" ? { rejectUnauthorized: false } : false,
+    }
+  }
+}

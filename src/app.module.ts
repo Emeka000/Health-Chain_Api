@@ -19,8 +19,24 @@ import { AuditLog } from './audit/audit-log.entity';
 import { LabModule } from './lab/lab.module';
 import { PharmacyModule } from './pharmacy/pharmacy.module';
 import { PharmacysModule } from './pharmacys/pharmacys.module';
+import { MarModule } from './mar/mar.module';
+import { EmergencyModule } from './emergency/emergency.module';
 import helmet from 'helmet';
 import * as compression from 'compression';
+
+import { EventEmitterModule } from "@nestjs/event-emitter"
+
+import { DatabaseConfig } from "./config/database.config"
+import { AuthModule } from "./modules/auth/auth.module"
+import { NursesModule } from "./modules/nurses/nurses.module"
+import { ShiftsModule } from "./modules/shifts/shifts.module"
+import { AssignmentsModule } from "./modules/assignments/assignments.module"
+import { StaffModule } from "./modules/staff/staff.module"
+import { DocumentationModule } from "./modules/documentation/documentation.module"
+import { QualityMetricsModule } from "./modules/quality-metrics/quality-metrics.module"
+import { PatientsModule } from "./modules/patients/patients.module"
+import { DepartmentsModule } from "./modules/departments/departments.module"
+import { AuditModule } from "./modules/audit/audit.module"
 
 @Module({
   imports: [
@@ -79,6 +95,8 @@ feat/pharmacy-lab-management-apis-39
     LabModule,
     PharmacysModule,
     ComplianceModule,
+    MarModule,
+    EmergencyModule,
   ],
   controllers: [AppController],
   providers: [AppService, EncryptionService, AuditService],
@@ -112,3 +130,28 @@ export class AppModule implements NestModule {
       .forRoutes('*');
   }
 }
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ".env",
+    }),
+    TypeOrmModule.forRootAsync({
+      useClass: DatabaseConfig,
+    }),
+    ScheduleModule.forRoot(),
+    EventEmitterModule.forRoot(),
+    AuthModule,
+    NursesModule,
+    ShiftsModule,
+    AssignmentsModule,
+    StaffModule,
+    DocumentationModule,
+    QualityMetricsModule,
+    PatientsModule,
+    DepartmentsModule,
+    AuditModule,
+  ],
+})
+export class AppModule {}

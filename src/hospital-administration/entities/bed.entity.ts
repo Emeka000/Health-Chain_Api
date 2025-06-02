@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { Hospital } from './hospital.entity';
 import { Department } from './department.entity';
 import { BedAllocation } from './bed-allocation.entity';
+import { Room } from './room.entity';
 
 export enum BedType {
   GENERAL = 'general',
@@ -50,6 +51,9 @@ export class Bed {
 
   @Column({ name: 'hospital_id' })
   hospitalId: string;
+
+  @ManyToOne(() => Room, room => room.beds)
+  room: Room;
 
   @Column({ name: 'department_id' })
   departmentId: string;

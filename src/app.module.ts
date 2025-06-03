@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { BillingModule } from './modules/billing/billing.module';
 import { MedicalStaffModule } from './medical-staff/medical-staff.module';
 import { DataQualityModule } from './data-quality/data-quality.module';
+import { ComplianceModule } from './compliance/compliance.module';
 import {
   getDatabaseConfig,
   getAuditDatabaseConfig,
@@ -94,6 +95,7 @@ feat/pharmacy-lab-management-apis-39
     DataQualityModule,
     LabModule,
     PharmacysModule,
+    ComplianceModule,
     MarModule,
     EmergencyModule,
     RoleModule,

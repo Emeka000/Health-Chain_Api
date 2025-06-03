@@ -8,7 +8,6 @@ import type { UpdatePatientDto } from './dto/update-patient.dto';
 @Injectable()
 export class PatientsService {
   constructor(
-    private patientsRepository: Repository<Patient>,
     @InjectRepository(Patient)
     private readonly patientsRepository: Repository<Patient>,
   ) {}

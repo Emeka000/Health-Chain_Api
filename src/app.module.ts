@@ -43,6 +43,9 @@ import { Drug } from './pharmacy/entities/drug.entity';
 import { Vendor } from './vendor/entities/vendor.entity';
 import { Recall } from './recall/entities/recall.entity';
 import { RoleModule } from './role/role.module';
+import { FhirModule } from './fhir/fhir.module';
+import { ConsentModule } from './consent/consent.module';
+import { EncryptionModule } from './modules/encryption/encryption.module';
 
 @Module({
   imports: [
@@ -109,6 +112,9 @@ import { RoleModule } from './role/role.module';
     RecallModule,
     WasteModule,
     RoleModule,
+    FhirModule,
+    ConsentModule,
+    EncryptionModule,
   ],
   controllers: [AppController],
   providers: [AppService, EncryptionService, AuditService],

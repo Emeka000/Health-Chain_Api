@@ -35,6 +35,7 @@ import { QualityMetricsModule } from './modules/quality-metrics/quality-metrics.
 import { PatientsModule } from './modules/patients/patients.module';
 import { DepartmentsModule } from './modules/departments/departments.module';
 import { AuditModule } from './modules/audit/audit.module';
+import { PrescriptionsModule } from './modules/prescriptions/prescriptions.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { VendorModule } from './vendor/vendor.module';
 import { RecallModule } from './recall/recall.module';
@@ -99,7 +100,7 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     // Application modules
     BillingModule,
     MedicalStaffModule,
-    feat / pharmacy - lab - management - apis - 39,
+    // TODO: Fix this import or remove if not needed
     PharmacyModule,
     DataQualityModule,
     LabModule,
@@ -115,6 +116,7 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     FhirModule,
     ConsentModule,
     EncryptionModule,
+    PrescriptionsModule,
   ],
   controllers: [AppController],
   providers: [AppService, EncryptionService, AuditService],
@@ -149,27 +151,29 @@ export class AppModule implements NestModule {
   }
 }
 
-@Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      envFilePath: '.env',
-    }),
-    TypeOrmModule.forRootAsync({
-      useClass: DatabaseConfig,
-    }),
-    ScheduleModule.forRoot(),
-    EventEmitterModule.forRoot(),
-    AuthModule,
-    NursesModule,
-    ShiftsModule,
-    AssignmentsModule,
-    StaffModule,
-    DocumentationModule,
-    QualityMetricsModule,
-    PatientsModule,
-    DepartmentsModule,
-    AuditModule,
-  ],
-})
-export class AppModule {}
+// This appears to be the active module configuration
+// @Module({
+//   imports: [
+//     ConfigModule.forRoot({
+//       isGlobal: true,
+//       envFilePath: '.env',
+//     }),
+//     TypeOrmModule.forRootAsync({
+//       useClass: DatabaseConfig,
+//     }),
+//     ScheduleModule.forRoot(),
+//     EventEmitterModule.forRoot(),
+//     AuthModule,
+//     NursesModule,
+//     ShiftsModule,
+//     AssignmentsModule,
+//     StaffModule,
+//     DocumentationModule,
+//     QualityMetricsModule,
+//     PatientsModule,
+//     DepartmentsModule,
+//     AuditModule,
+//     PrescriptionsModule,
+//   ],
+// })
+// export class AppModule {}

@@ -10,68 +10,68 @@ import {
   IsNumber,
   Min,
   Max,
-} from "class-validator"
-import { Type } from "class-transformer"
-import { ScheduleType } from "../enums/schedule-type.enum"
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { ScheduleType } from '../enums/schedule-type.enum';
 
 class RecurrencePatternDto {
-  @IsEnum(["DAILY", "WEEKLY", "MONTHLY"])
-  frequency: "DAILY" | "WEEKLY" | "MONTHLY"
+  @IsEnum(['DAILY', 'WEEKLY', 'MONTHLY'])
+  frequency: 'DAILY' | 'WEEKLY' | 'MONTHLY';
 
   @IsNumber()
   @Min(1)
-  interval: number
+  interval: number;
 
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  endDate?: Date
+  endDate?: Date;
 
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
   @Min(0, { each: true })
   @Max(6, { each: true })
-  daysOfWeek?: number[]
+  daysOfWeek?: number[];
 }
 
 export class CreateScheduleDto {
   @IsUUID()
-  doctorId: string
+  doctorId: string;
 
   @IsEnum(ScheduleType)
-  scheduleType: ScheduleType
+  scheduleType: ScheduleType;
 
   @IsDate()
   @Type(() => Date)
-  startTime: Date
+  startTime: Date;
 
   @IsDate()
   @Type(() => Date)
-  endTime: Date
+  endTime: Date;
 
   @IsOptional()
   @IsString()
-  location?: string
+  location?: string;
 
   @IsOptional()
   @IsUUID()
-  patientId?: string
+  patientId?: string;
 
   @IsOptional()
   @IsString()
-  appointmentType?: string
+  appointmentType?: string;
 
   @IsOptional()
   @IsBoolean()
-  isRecurring?: boolean
+  isRecurring?: boolean;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => RecurrencePatternDto)
-  recurrencePattern?: RecurrencePatternDto
+  recurrencePattern?: RecurrencePatternDto;
 
   @IsOptional()
   @IsString()
-  notes?: string
+  notes?: string;
 }

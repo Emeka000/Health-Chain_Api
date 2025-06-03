@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import { BillingModule } from './modules/billing/billing.module';
 import { MedicalStaffModule } from './medical-staff/medical-staff.module';
 import { DataQualityModule } from './data-quality/data-quality.module';
+import { ComplianceModule } from './compliance/compliance.module';
 import {
   getDatabaseConfig,
   getAuditDatabaseConfig,
@@ -22,9 +23,7 @@ import { MarModule } from './mar/mar.module';
 import { EmergencyModule } from './emergency/emergency.module';
 import helmet from 'helmet';
 import * as compression from 'compression';
-
 import { EventEmitterModule } from '@nestjs/event-emitter';
-
 import { DatabaseConfig } from './config/database.config';
 import { AuthModule } from './modules/auth/auth.module';
 import { NursesModule } from './modules/nurses/nurses.module';
@@ -43,6 +42,7 @@ import { WasteModule } from './waste/waste.module';
 import { Drug } from './pharmacy/entities/drug.entity';
 import { Vendor } from './vendor/entities/vendor.entity';
 import { Recall } from './recall/entities/recall.entity';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -101,12 +101,14 @@ import { Recall } from './recall/entities/recall.entity';
     DataQualityModule,
     LabModule,
     PharmacysModule,
+    ComplianceModule,
     MarModule,
     EmergencyModule,
     InventoryModule,
     VendorModule,
     RecallModule,
     WasteModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService, EncryptionService, AuditService],

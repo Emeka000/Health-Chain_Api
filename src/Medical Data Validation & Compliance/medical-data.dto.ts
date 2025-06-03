@@ -1,18 +1,30 @@
-import { IsString, IsNotEmpty, IsOptional, IsDateString, Matches, IsEnum, ValidateNested, IsArray, ArrayMinSize } from 'class-validator';
+import {
+  IsString,
+  IsNotEmpty,
+  IsOptional,
+  IsDateString,
+  Matches,
+  IsEnum,
+  ValidateNested,
+  IsArray,
+  ArrayMinSize,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export enum EmergencyLevel {
   CRITICAL = 'CRITICAL',
   URGENT = 'URGENT',
-  STANDARD = 'STANDARD'
+  STANDARD = 'STANDARD',
 }
 
 export class MedicalCodeDto {
   @ApiProperty({ description: 'ICD-10 diagnosis code' })
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[A-Z]\d{2}(\.\d{1,3})?$/, { message: 'Invalid ICD-10 code format' })
+  @Matches(/^[A-Z]\d{2}(\.\d{1,3})?$/, {
+    message: 'Invalid ICD-10 code format',
+  })
   icd10Code: string;
 
   @ApiProperty({ description: 'CPT procedure code' })

@@ -3,7 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { BackupService } from './backup.service';
 
 @Injectable()
-export class BackupTasks { 
+export class BackupTasks {
   constructor(private readonly backupService: BackupService) {}
 
   @Cron('0 0 * * *') // Every day at midnight

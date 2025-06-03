@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Drug } from './drug.entity';
 
 @Entity('inventory_items')
@@ -6,7 +13,7 @@ export class InventoryItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Drug, drug => drug.inventoryItems)
+  @ManyToOne(() => Drug, (drug) => drug.inventoryItems)
   drug: Drug;
 
   @Column()

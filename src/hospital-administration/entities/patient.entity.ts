@@ -1,18 +1,25 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { BedAllocation } from './bed-allocation.entity';
 import { Bill } from './bill.entity';
 
 export enum Gender {
   MALE = 'male',
   FEMALE = 'female',
-  OTHER = 'other'
+  OTHER = 'other',
 }
 
 export enum PatientStatus {
   ADMITTED = 'admitted',
   DISCHARGED = 'discharged',
   OUTPATIENT = 'outpatient',
-  EMERGENCY = 'emergency'
+  EMERGENCY = 'emergency',
 }
 
 @Entity('patients')
@@ -56,7 +63,11 @@ export class Patient {
   @Column({ name: 'insurance_provider', nullable: true })
   insuranceProvider: string;
 
-  @Column({ type: 'enum', enum: PatientStatus, default: PatientStatus.OUTPATIENT })
+  @Column({
+    type: 'enum',
+    enum: PatientStatus,
+    default: PatientStatus.OUTPATIENT,
+  })
   status: PatientStatus;
 
   @Column('json', { nullable: true })
@@ -65,10 +76,10 @@ export class Patient {
   @Column('json', { nullable: true })
   allergies: string[];
 
-  @OneToMany(() => BedAllocation, allocation => allocation.patient)
+  @OneToMany(() => BedAllocation, (allocation) => allocation.patient)
   bedAllocations: BedAllocation[];
 
-  @OneToMany(() => Bill, bill => bill.patient)
+  @OneToMany(() => Bill, (bill) => bill.patient)
   bills: Bill[];
 
   @CreateDateColumn({ name: 'created_at' })

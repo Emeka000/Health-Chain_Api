@@ -11,12 +11,12 @@ export class MedicalDataSanitizerService {
       chiefComplaint: this.sanitizeMedicalText(data.chiefComplaint),
       attendingPhysicianId: this.sanitizeString(data.attendingPhysicianId),
       notes: data.notes ? this.sanitizeMedicalText(data.notes) : undefined,
-      medicalCodes: data.medicalCodes.map(code => ({
+      medicalCodes: data.medicalCodes.map((code) => ({
         ...code,
         icd10Code: this.sanitizeString(code.icd10Code).toUpperCase(),
         cptCode: this.sanitizeString(code.cptCode),
-        description: this.sanitizeMedicalText(code.description)
-      }))
+        description: this.sanitizeMedicalText(code.description),
+      })),
     };
   }
 

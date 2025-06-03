@@ -36,4 +36,4 @@ import { EquipmentService } from './services/equipment.service';
   ],
   exports: [MonitoringService],
 })
-export class MonitoringModule {} 
+export class MonitoringModule {}

@@ -2,7 +2,7 @@
 describe('HIPAA Compliance', () => {
   it('should not log PHI', () => {
     const logs = getRecentLogs();
-    logs.forEach(log => {
+    logs.forEach((log) => {
       expect(log).not.toMatch(/name|ssn|email/);
     });
   });

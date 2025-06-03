@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('equipment_health')
 export class EquipmentHealth {
@@ -65,4 +71,4 @@ export class EquipmentHealth {
 
   @UpdateDateColumn()
   updatedAt: Date;
-} 
+}

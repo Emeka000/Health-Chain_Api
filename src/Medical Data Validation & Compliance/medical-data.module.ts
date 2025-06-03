@@ -22,7 +22,7 @@ import { APP_FILTER } from '@nestjs/core';
   exports: [
     MedicalDataService,
     MedicalAuditService,
-    MedicalCodeValidatorService
-  ]
+    MedicalCodeValidatorService,
+  ],
 })
 export class MedicalDataModule {}

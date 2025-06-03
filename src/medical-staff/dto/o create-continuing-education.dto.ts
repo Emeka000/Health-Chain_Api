@@ -1,65 +1,74 @@
-import { IsString, IsNumber, IsDate, IsEnum, IsOptional, IsBoolean, ValidateNested, IsUUID } from "class-validator"
-import { Type } from "class-transformer"
-import { EducationType } from "../enums/education-type.enum"
+import {
+  IsString,
+  IsNumber,
+  IsDate,
+  IsEnum,
+  IsOptional,
+  IsBoolean,
+  ValidateNested,
+  IsUUID,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { EducationType } from '../enums/education-type.enum';
 
 class EducationDetailsDto {
   @IsNumber()
-  duration: number
+  duration: number;
 
-  @IsEnum(["ONLINE", "IN_PERSON", "HYBRID"])
-  format: "ONLINE" | "IN_PERSON" | "HYBRID"
+  @IsEnum(['ONLINE', 'IN_PERSON', 'HYBRID'])
+  format: 'ONLINE' | 'IN_PERSON' | 'HYBRID';
 
   @IsString()
-  category: string
+  category: string;
 
   @IsOptional()
   @IsString()
-  documentUrl?: string
+  documentUrl?: string;
 }
 
 export class CreateContinuingEducationDto {
   @IsUUID()
-  doctorId: string
+  doctorId: string;
 
   @IsEnum(EducationType)
-  educationType: EducationType
+  educationType: EducationType;
 
   @IsString()
-  title: string
+  title: string;
 
   @IsString()
-  provider: string
+  provider: string;
 
   @IsNumber()
-  credits: number
+  credits: number;
 
   @IsDate()
   @Type(() => Date)
-  completionDate: Date
+  completionDate: Date;
 
   @IsOptional()
   @IsDate()
   @Type(() => Date)
-  expiryDate?: Date
+  expiryDate?: Date;
 
   @IsOptional()
   @IsString()
-  certificateNumber?: string
+  certificateNumber?: string;
 
   @IsOptional()
   @IsString()
-  accreditationBody?: string
+  accreditationBody?: string;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => EducationDetailsDto)
-  details?: EducationDetailsDto
+  details?: EducationDetailsDto;
 
   @IsOptional()
   @IsBoolean()
-  isVerified?: boolean
+  isVerified?: boolean;
 
   @IsOptional()
   @IsString()
-  notes?: string
+  notes?: string;
 }

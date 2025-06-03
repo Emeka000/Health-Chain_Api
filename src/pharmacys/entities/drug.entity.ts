@@ -1,7 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { InventoryItem } from './inventory-item.entity';
 import { PrescriptionItem } from './prescription-item.entity';
-
 
 export enum DrugSchedule {
   NON_CONTROLLED = 'NON_CONTROLLED',
@@ -9,7 +15,7 @@ export enum DrugSchedule {
   SCHEDULE_II = 'SCHEDULE_II',
   SCHEDULE_III = 'SCHEDULE_III',
   SCHEDULE_IV = 'SCHEDULE_IV',
-  SCHEDULE_V = 'SCHEDULE_V'
+  SCHEDULE_V = 'SCHEDULE_V',
 }
 
 export enum DosageForm {
@@ -18,7 +24,7 @@ export enum DosageForm {
   LIQUID = 'LIQUID',
   INJECTION = 'INJECTION',
   CREAM = 'CREAM',
-  INHALER = 'INHALER'
+  INHALER = 'INHALER',
 }
 
 @Entity('drugs')
@@ -47,7 +53,11 @@ export class Drug {
   @Column({ type: 'enum', enum: DosageForm })
   dosageForm: DosageForm;
 
-  @Column({ type: 'enum', enum: DrugSchedule, default: DrugSchedule.NON_CONTROLLED })
+  @Column({
+    type: 'enum',
+    enum: DrugSchedule,
+    default: DrugSchedule.NON_CONTROLLED,
+  })
   schedule: DrugSchedule;
 
   @Column({ type: 'text', array: true, default: [] })
@@ -77,10 +87,10 @@ export class Drug {
   @Column({ type: 'text', nullable: true })
   description: string;
 
-  @OneToMany(() => InventoryItem, item => item.drug)
+  @OneToMany(() => InventoryItem, (item) => item.drug)
   inventoryItems: InventoryItem[];
 
-  @OneToMany(() => PrescriptionItem, item => item.drug)
+  @OneToMany(() => PrescriptionItem, (item) => item.drug)
   prescriptionItems: PrescriptionItem[];
 
   @CreateDateColumn()

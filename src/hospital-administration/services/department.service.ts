@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, FindManyOptions } from 'typeorm';
 import { Department } from '../entities/department.entity';
@@ -13,26 +17,40 @@ export class DepartmentService {
 
   async create(createDepartmentDto: any): Promise<Department> {
     const existingDepartment = await this.departmentRepository.findOne({
-      where: { code: createDepartmentDto.code, hospitalId: createDepartmentDto.hospitalId }
+      where: {
+        code: createDepartmentDto.code,
+        hospitalId: createDepartmentDto.hospitalId,
+      },
     });
 
     if (existingDepartment) {
-      throw new BadRequestException('Department with this code already exists in this hospital');
+      throw new BadRequestException(
+        'Department with this code already exists in this hospital',
+      );
     }
 
     const department = this.departmentRepository.create(createDepartmentDto);
     return await this.departmentRepository.save(department);
   }
 
-  async findAll(query: FilterQuery): Promise<{ data: Department[]; pagination: any }> {
-    const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC', search, status } = query;
+  async findAll(
+    query: FilterQuery,
+  ): Promise<{ data: Department[]; pagination: any }> {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+      search,
+      status,
+    } = query;
 
     const whereConditions: any = {};
-    
+
     if (search) {
       whereConditions.name = Like(`%${search}%`);
     }
-    
+
     if (status) {
       whereConditions.status = status;
     }
@@ -49,7 +67,8 @@ export class DepartmentService {
       relations: ['hospital', 'staff', 'beds'],
     };
 
-    const [departments, total] = await this.departmentRepository.findAndCount(options);
+    const [departments, total] =
+      await this.departmentRepository.findAndCount(options);
 
     return {
       data: departments,
@@ -77,17 +96,19 @@ export class DepartmentService {
 
   async update(id: string, updateDto: any): Promise<Department> {
     const department = await this.findOne(id);
-    
+
     Object.assign(department, updateDto);
     return await this.departmentRepository.save(department);
   }
 
   async remove(id: string): Promise<void> {
     const department = await this.findOne(id);
-    
+
     // Check if department has active staff or beds
     if (department.staff?.length > 0 || department.beds?.length > 0) {
-      throw new BadRequestException('Cannot delete department with active staff or beds');
+      throw new BadRequestException(
+        'Cannot delete department with active staff or beds',
+      );
     }
 
     await this.departmentRepository.remove(department);
@@ -97,10 +118,14 @@ export class DepartmentService {
     const department = await this.findOne(id);
 
     const totalStaff = department.staff?.length || 0;
-    const activeStaff = department.staff?.filter(staff => staff.status === 'active').length || 0;
+    const activeStaff =
+      department.staff?.filter((staff) => staff.status === 'active').length ||
+      0;
     const totalBeds = department.beds?.length || 0;
-    const occupiedBeds = department.beds?.filter(bed => bed.status === 'occupied').length || 0;
-    const availableBeds = department.beds?.filter(bed => bed.status === 'available').length || 0;
+    const occupiedBeds =
+      department.beds?.filter((bed) => bed.status === 'occupied').length || 0;
+    const availableBeds =
+      department.beds?.filter((bed) => bed.status === 'available').length || 0;
 
     return {
       id: department.id,
@@ -113,5 +138,22 @@ export class DepartmentService {
       bedCapacity: department.bedCapacity,
       utilizationRate: totalBeds > 0 ? (occupiedBeds / totalBeds) * 100 : 0,
     };
+  }
+
+  async updatePerformance(deptId: number) {
+    const department = await this.departmentRepository.findOne({
+      where: { id: deptId },
+      relations: ['wards', 'wards.rooms', 'wards.rooms.beds'],
+    });
+
+    const allBeds = department.wards.flatMap((ward) =>
+      ward.rooms.flatMap((room) => room.beds),
+    );
+
+    const usedBeds = allBeds.filter((bed) => !bed.isAvailable).length;
+    const usageRate = (usedBeds / allBeds.length) * 100;
+
+    department.performanceScore = Math.round(usageRate);
+    return this.departmentRepository.save(department);
   }
 }

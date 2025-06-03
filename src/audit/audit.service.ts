@@ -46,7 +46,7 @@ export class AuditService {
 
   private createFileLogger(): winston.Logger {
     const logDir = './logs/audit';
-    
+
     return winston.createLogger({
       level: this.configService.get('AUDIT_LOG_LEVEL', 'info'),
       format: winston.format.combine(
@@ -78,10 +78,7 @@ export class AuditService {
   /**
    * Log audit event to both database and file system
    */
-  async logAuditEvent(
-    context: AuditContext,
-    data: AuditData,
-  ): Promise<void> {
+  async logAuditEvent(context: AuditContext, data: AuditData): Promise<void> {
     try {
       // Create audit log entry
       const auditLog = this.auditLogRepository.create({
@@ -130,9 +127,11 @@ export class AuditService {
       if (data.isPHIAccess) {
         this.logPHIAccess(context, data);
       }
-
     } catch (error) {
-      this.logger.error(`Failed to log audit event: ${error.message}`, error.stack);
+      this.logger.error(
+        `Failed to log audit event: ${error.message}`,
+        error.stack,
+      );
       // Fallback to file logging only
       this.fileLogger.error('Audit Logging Failed', {
         error: error.message,
@@ -255,31 +254,43 @@ export class AuditService {
     isPHIAccess?: boolean;
   }): Promise<{ logs: AuditLog[]; total: number }> {
     const { page = 1, limit = 50, ...filters } = options;
-    
+
     const queryBuilder = this.auditLogRepository.createQueryBuilder('audit');
 
     if (filters.userId) {
-      queryBuilder.andWhere('audit.userId = :userId', { userId: filters.userId });
+      queryBuilder.andWhere('audit.userId = :userId', {
+        userId: filters.userId,
+      });
     }
 
     if (filters.action) {
-      queryBuilder.andWhere('audit.action = :action', { action: filters.action });
+      queryBuilder.andWhere('audit.action = :action', {
+        action: filters.action,
+      });
     }
 
     if (filters.entityType) {
-      queryBuilder.andWhere('audit.entityType = :entityType', { entityType: filters.entityType });
+      queryBuilder.andWhere('audit.entityType = :entityType', {
+        entityType: filters.entityType,
+      });
     }
 
     if (filters.startDate) {
-      queryBuilder.andWhere('audit.createdAt >= :startDate', { startDate: filters.startDate });
+      queryBuilder.andWhere('audit.createdAt >= :startDate', {
+        startDate: filters.startDate,
+      });
     }
 
     if (filters.endDate) {
-      queryBuilder.andWhere('audit.createdAt <= :endDate', { endDate: filters.endDate });
+      queryBuilder.andWhere('audit.createdAt <= :endDate', {
+        endDate: filters.endDate,
+      });
     }
 
     if (filters.isPHIAccess !== undefined) {
-      queryBuilder.andWhere('audit.isPHIAccess = :isPHIAccess', { isPHIAccess: filters.isPHIAccess });
+      queryBuilder.andWhere('audit.isPHIAccess = :isPHIAccess', {
+        isPHIAccess: filters.isPHIAccess,
+      });
     }
 
     queryBuilder
@@ -296,7 +307,10 @@ export class AuditService {
    * Cleanup old audit logs based on retention policy
    */
   async cleanupOldLogs(): Promise<void> {
-    const retentionDays = parseInt(this.configService.get('AUDIT_LOG_RETENTION_DAYS', '2555'), 10);
+    const retentionDays = parseInt(
+      this.configService.get('AUDIT_LOG_RETENTION_DAYS', '2555'),
+      10,
+    );
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
@@ -308,4 +322,4 @@ export class AuditService {
 
     this.logger.log(`Cleaned up ${result.affected} old audit log entries`);
   }
-} 
+}

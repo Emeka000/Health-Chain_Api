@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Resource } from './resource.entity';
 import { Staff } from './staff.entity';
 import { Department } from './department.entity';
@@ -35,19 +43,19 @@ export class ResourceAllocation {
   @Column({ name: 'allocated_by' })
   allocatedBy: string;
 
-  @ManyToOne(() => Resource, resource => resource.allocations)
+  @ManyToOne(() => Resource, (resource) => resource.allocations)
   @JoinColumn({ name: 'resource_id' })
   resource: Resource;
 
-  @ManyToOne(() => Staff, staff => staff)
+  @ManyToOne(() => Staff, (staff) => staff)
   @JoinColumn({ name: 'allocated_to_staff_id' })
   allocatedToStaff: Staff;
 
-  @ManyToOne(() => Department, department => department)
+  @ManyToOne(() => Department, (department) => department)
   @JoinColumn({ name: 'allocated_to_department_id' })
   allocatedToDepartment: Department;
 
-  @ManyToOne(() => Staff, staff => staff)
+  @ManyToOne(() => Staff, (staff) => staff)
   @JoinColumn({ name: 'allocated_by' })
   allocatedByStaff: Staff;
 

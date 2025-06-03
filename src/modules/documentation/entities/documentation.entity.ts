@@ -6,97 +6,91 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-} from "typeorm"
-import { DocumentationType, Priority } from "../../../common/enums"
-import { Nurse } from "../../nurses/entities/nurse.entity"
-import { Patient } from "../../patients/entities/patient.entity"
+} from 'typeorm';
+import { DocumentationType, Priority } from '../../../common/enums';
+import { Nurse } from '../../nurses/entities/nurse.entity';
+import { Patient } from '../../patients/entities/patient.entity';
 
-@Entity("documentation")
+@Entity('documentation')
 export class Documentation {
-  @PrimaryGeneratedColumn("uuid")
-  id: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
-  nurseId: string
+  nurseId: string;
 
   @Column()
-  patientId: string
+  patientId: string;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: DocumentationType,
   })
-  documentationType: DocumentationType
+  documentationType: DocumentationType;
 
   @Column()
-  title: string
+  title: string;
 
-  @Column({ type: "text" })
-  content: string
+  @Column({ type: 'text' })
+  content: string;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: Priority,
     default: Priority.MEDIUM,
   })
-  priority: Priority
+  priority: Priority;
 
-  @Column({ type: "json", nullable: true })
+  @Column({ type: 'json', nullable: true })
   vitalSigns: {
-    temperature?: number
-    bloodPressureSystolic?: number
-    bloodPressureDiastolic?: number
-    heartRate?: number
-    respiratoryRate?: number
-    oxygenSaturation?: number
-    painLevel?: number
-    weight?: number
-    height?: number
-  }
+    temperature?: number;
+    bloodPressureSystolic?: number;
+    bloodPressureDiastolic?: number;
+    heartRate?: number;
+    respiratoryRate?: number;
+    oxygenSaturation?: number;
+    painLevel?: number;
+    weight?: number;
+    height?: number;
+  };
 
-  @Column({ type: "json", nullable: true })
+  @Column({ type: 'json', nullable: true })
   medications: {
-    name: string
-    dosage: string
-    route: string
-    frequency: string
-    timeAdministered: string
-    nurseInitials: string
-    patientResponse?: string
-  }[]
+    name: string;
+    dosage: string;
+    route: string;
+    frequency: string;
+    timeAdministered: string;
+    nurseInitials: string;
+    patientResponse?: string;
+  }[];
 
-  @Column({ type: "timestamp" })
-  documentedAt: Date
-
-  @Column({ default: false })
-  isAmended: boolean
-
-  @Column({ type: "text", nullable: true })
-  amendmentReason: string
+  @Column({ type: 'timestamp' })
+  documentedAt: Date;
 
   @Column({ default: false })
-  requiresPhysicianReview: boolean
+  isAmended: boolean;
+
+  @Column({ type: 'text', nullable: true })
+  amendmentReason: string;
 
   @Column({ default: false })
-  isReviewed: boolean
+  requiresPhysicianReview: boolean;
 
-  @ManyToOne(
-    () => Nurse,
-    (nurse) => nurse.documentation,
-  )
-  @JoinColumn({ name: "nurseId" })
-  nurse: Nurse
+  @Column({ default: false })
+  isReviewed: boolean;
 
-  @ManyToOne(
-    () => Patient,
-    (patient) => patient.documentation,
-  )
-  @JoinColumn({ name: "patientId" })
-  patient: Patient
+  @ManyToOne(() => Nurse, (nurse) => nurse.documentation)
+  @JoinColumn({ name: 'nurseId' })
+  nurse: Nurse;
+
+  @ManyToOne(() => Patient, (patient) => patient.documentation)
+  @JoinColumn({ name: 'patientId' })
+  patient: Patient;
 
   @CreateDateColumn()
-  createdAt: Date
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date
+  updatedAt: Date;
 }

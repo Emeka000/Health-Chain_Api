@@ -1,21 +1,32 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, ParseUUIDPipe } from "@nestjs/common"
-import { ApiTags, ApiOperation } from "@nestjs/swagger"
-import { JwtAuthGuard } from "src/modules/auth/guards/jwt-auth.guard";
-import { RolesGuard } from "src/modules/auth/guards/roles.guard";
-import { MedicalStaffService } from "../providers/medical-staff.service";
-import { SchedulingService } from "../providers/scheduling.service";
-import { PerformanceTrackingService } from "../providers/performance-tracking.service";
-import { Roles } from "src/modules/auth/decorators/roles.decorator";
-import { CreateDoctorDto } from "../dto/create-doctor.dto";
-import { UpdateDoctorDto } from "../dto/update-doctor.dto";
-import { CreateScheduleDto } from "../dto/create-schedule.dto";
-import { CreatePerformanceMetricDto } from "../dto/create-performance-metric.dto";
-import { CreateContinuingEducationDto } from "../dto/o create-continuing-education.dto";
-import { CreateDepartmentDto } from "../dto/create-department.dto";
-import { CreateSpecialtyDto } from "../dto/create-specialty.dto";
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  ParseUUIDPipe,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/modules/auth/guards/roles.guard';
+import { MedicalStaffService } from '../providers/medical-staff.service';
+import { SchedulingService } from '../providers/scheduling.service';
+import { PerformanceTrackingService } from '../providers/performance-tracking.service';
+import { Roles } from 'src/modules/auth/decorators/roles.decorator';
+import { CreateDoctorDto } from '../dto/create-doctor.dto';
+import { UpdateDoctorDto } from '../dto/update-doctor.dto';
+import { CreateScheduleDto } from '../dto/create-schedule.dto';
+import { CreatePerformanceMetricDto } from '../dto/create-performance-metric.dto';
+import { CreateContinuingEducationDto } from '../dto/o create-continuing-education.dto';
+import { CreateDepartmentDto } from '../dto/create-department.dto';
+import { CreateSpecialtyDto } from '../dto/create-specialty.dto';
 
-@ApiTags("Medical Staff Management")
-@Controller("medical-staff")
+@ApiTags('Medical Staff Management')
+@Controller('medical-staff')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class MedicalStaffController {
   constructor(
@@ -32,9 +43,9 @@ export class MedicalStaffController {
     return this.medicalStaffService.createDoctor(createDoctorDto);
   }
 
-  @Get("doctors")
-  @Roles("admin", "hr", "doctor")
-  @ApiOperation({ summary: "Get all doctors with filters" })
+  @Get('doctors')
+  @Roles('admin', 'hr', 'doctor')
+  @ApiOperation({ summary: 'Get all doctors with filters' })
   async getDoctors(
     @Query('departmentId') departmentId?: string,
     @Query('specialtyId') specialtyId?: string,
@@ -44,7 +55,7 @@ export class MedicalStaffController {
       departmentId,
       specialtyId,
       status,
-    })
+    });
   }
 
   @Get('doctors/:id')
@@ -54,11 +65,14 @@ export class MedicalStaffController {
     return this.medicalStaffService.getDoctor(id);
   }
 
-  @Put("doctors/:id")
-  @Roles("admin", "hr")
-  @ApiOperation({ summary: "Update doctor profile" })
-  async updateDoctor(@Param('id', ParseUUIDPipe) id: string, @Body() updateDoctorDto: UpdateDoctorDto) {
-    return this.medicalStaffService.updateDoctor(id, updateDoctorDto)
+  @Put('doctors/:id')
+  @Roles('admin', 'hr')
+  @ApiOperation({ summary: 'Update doctor profile' })
+  async updateDoctor(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateDoctorDto: UpdateDoctorDto,
+  ) {
+    return this.medicalStaffService.updateDoctor(id, updateDoctorDto);
   }
 
   @Delete('doctors/:id')
@@ -83,11 +97,14 @@ export class MedicalStaffController {
     return this.medicalStaffService.getExpiringLicenses(days);
   }
 
-  @Put("licenses/:id/renew")
-  @Roles("admin", "hr")
-  @ApiOperation({ summary: "Renew medical license" })
-  async renewLicense(@Param('id', ParseUUIDPipe) id: string, @Body('newExpiryDate') newExpiryDate: Date) {
-    return this.medicalStaffService.renewLicense(id, newExpiryDate)
+  @Put('licenses/:id/renew')
+  @Roles('admin', 'hr')
+  @ApiOperation({ summary: 'Renew medical license' })
+  async renewLicense(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body('newExpiryDate') newExpiryDate: Date,
+  ) {
+    return this.medicalStaffService.renewLicense(id, newExpiryDate);
   }
 
   // Scheduling
@@ -98,9 +115,9 @@ export class MedicalStaffController {
     return this.schedulingService.createSchedule(createScheduleDto);
   }
 
-  @Get("schedules")
-  @Roles("admin", "hr", "doctor")
-  @ApiOperation({ summary: "Get schedules with filters" })
+  @Get('schedules')
+  @Roles('admin', 'hr', 'doctor')
+  @ApiOperation({ summary: 'Get schedules with filters' })
   async getSchedules(
     @Query('doctorId') doctorId?: string,
     @Query('departmentId') departmentId?: string,
@@ -112,26 +129,31 @@ export class MedicalStaffController {
       departmentId,
       startDate,
       endDate,
-    })
+    });
   }
 
-  @Get("doctors/:id/availability")
-  @Roles("admin", "hr", "doctor")
-  @ApiOperation({ summary: "Check doctor availability" })
+  @Get('doctors/:id/availability')
+  @Roles('admin', 'hr', 'doctor')
+  @ApiOperation({ summary: 'Check doctor availability' })
   async checkAvailability(
     @Param('id', ParseUUIDPipe) id: string,
     @Query('date') date: Date,
     @Query('startTime') startTime: string,
     @Query('endTime') endTime: string,
   ) {
-    return this.schedulingService.checkAvailability(id, date, startTime, endTime)
+    return this.schedulingService.checkAvailability(
+      id,
+      date,
+      startTime,
+      endTime,
+    );
   }
 
-  @Get("schedules/conflicts")
-  @Roles("admin", "hr")
-  @ApiOperation({ summary: "Get scheduling conflicts" })
+  @Get('schedules/conflicts')
+  @Roles('admin', 'hr')
+  @ApiOperation({ summary: 'Get scheduling conflicts' })
   async getSchedulingConflicts() {
-    return this.schedulingService.getSchedulingConflicts()
+    return this.schedulingService.getSchedulingConflicts();
   }
 
   // Performance Tracking
@@ -141,18 +163,24 @@ export class MedicalStaffController {
   async createPerformanceMetric(
     @Body() createMetricDto: CreatePerformanceMetricDto,
   ) {
-    return this.performanceTrackingService.createPerformanceMetric(createMetricDto);
+    return this.performanceTrackingService.createPerformanceMetric(
+      createMetricDto,
+    );
   }
 
-  @Get("doctors/:id/performance")
-  @Roles("admin", "hr", "doctor")
-  @ApiOperation({ summary: "Get doctor performance metrics" })
+  @Get('doctors/:id/performance')
+  @Roles('admin', 'hr', 'doctor')
+  @ApiOperation({ summary: 'Get doctor performance metrics' })
   async getDoctorPerformance(
     @Param('id', ParseUUIDPipe) id: string,
     @Query('startDate') startDate?: Date,
     @Query('endDate') endDate?: Date,
   ) {
-    return this.performanceTrackingService.getDoctorPerformance(id, startDate, endDate)
+    return this.performanceTrackingService.getDoctorPerformance(
+      id,
+      startDate,
+      endDate,
+    );
   }
 
   @Get('performance/department-summary')
@@ -161,7 +189,9 @@ export class MedicalStaffController {
   async getDepartmentPerformanceSummary(
     @Query('departmentId') departmentId?: string,
   ) {
-    return this.performanceTrackingService.getDepartmentPerformanceSummary(departmentId);
+    return this.performanceTrackingService.getDepartmentPerformanceSummary(
+      departmentId,
+    );
   }
 
   // Continuing Education
@@ -171,7 +201,9 @@ export class MedicalStaffController {
   async recordContinuingEducation(
     @Body() createEducationDto: CreateContinuingEducationDto,
   ) {
-    return this.medicalStaffService.recordContinuingEducation(createEducationDto);
+    return this.medicalStaffService.recordContinuingEducation(
+      createEducationDto,
+    );
   }
 
   @Get('doctors/:id/continuing-education')
@@ -181,11 +213,11 @@ export class MedicalStaffController {
     return this.medicalStaffService.getDoctorEducationCredits(id);
   }
 
-  @Get("continuing-education/compliance")
-  @Roles("admin", "hr")
-  @ApiOperation({ summary: "Get continuing education compliance report" })
+  @Get('continuing-education/compliance')
+  @Roles('admin', 'hr')
+  @ApiOperation({ summary: 'Get continuing education compliance report' })
   async getEducationCompliance() {
-    return this.medicalStaffService.getEducationCompliance()
+    return this.medicalStaffService.getEducationCompliance();
   }
 
   // Department and Specialty Management
@@ -196,11 +228,11 @@ export class MedicalStaffController {
     return this.medicalStaffService.createDepartment(createDepartmentDto);
   }
 
-  @Get("departments")
-  @Roles("admin", "hr", "doctor")
-  @ApiOperation({ summary: "Get all departments" })
+  @Get('departments')
+  @Roles('admin', 'hr', 'doctor')
+  @ApiOperation({ summary: 'Get all departments' })
   async getDepartments() {
-    return this.medicalStaffService.getDepartments()
+    return this.medicalStaffService.getDepartments();
   }
 
   @Post('specialties')
@@ -210,10 +242,10 @@ export class MedicalStaffController {
     return this.medicalStaffService.createSpecialty(createSpecialtyDto);
   }
 
-  @Get("specialties")
-  @Roles("admin", "hr", "doctor")
-  @ApiOperation({ summary: "Get all specialties" })
+  @Get('specialties')
+  @Roles('admin', 'hr', 'doctor')
+  @ApiOperation({ summary: 'Get all specialties' })
   async getSpecialties() {
-    return this.medicalStaffService.getSpecialties()
+    return this.medicalStaffService.getSpecialties();
   }
 }

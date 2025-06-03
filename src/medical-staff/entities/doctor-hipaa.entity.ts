@@ -12,24 +12,24 @@ import {
   BeforeUpdate,
   AfterLoad,
   Index,
-} from "typeorm";
-import { Exclude, Transform } from "class-transformer";
-import { DoctorStatus } from "../enums/doctor-status.enum";
-import { Department } from "./department.entity";
-import { Specialty } from "./specialty.entity";
-import { MedicalLicense } from "./medical-license.entity";
-import { Schedule } from "./schedule.entity";
-import { PerformanceMetric } from "./performance-metric.entity";
-import { ContinuingEducation } from "./continuing-education.entity";
-import { EncryptionService } from "../../security/encryption.service";
+} from 'typeorm';
+import { Exclude, Transform } from 'class-transformer';
+import { DoctorStatus } from '../enums/doctor-status.enum';
+import { Department } from './department.entity';
+import { Specialty } from './specialty.entity';
+import { MedicalLicense } from './medical-license.entity';
+import { Schedule } from './schedule.entity';
+import { PerformanceMetric } from './performance-metric.entity';
+import { ContinuingEducation } from './continuing-education.entity';
+import { EncryptionService } from '../../security/encryption.service';
 
-@Entity("doctors_hipaa")
+@Entity('doctors_hipaa')
 @Index(['employeeId'])
 @Index(['email'])
 @Index(['departmentId'])
 @Index(['status'])
 export class DoctorHIPAA {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column({ unique: true })
@@ -66,10 +66,10 @@ export class DoctorHIPAA {
   @Exclude({ toPlainOnly: true })
   private _dateOfBirth: string;
 
-  @Column({ type: "date" })
+  @Column({ type: 'date' })
   hireDate: Date;
 
-  @Column({ type: "enum", enum: DoctorStatus, default: DoctorStatus.ACTIVE })
+  @Column({ type: 'enum', enum: DoctorStatus, default: DoctorStatus.ACTIVE })
   @Index()
   status: DoctorStatus;
 
@@ -77,60 +77,43 @@ export class DoctorHIPAA {
   @Index()
   departmentId: string;
 
-  @ManyToOne(
-    () => Department,
-    (department) => department.doctors,
-  )
+  @ManyToOne(() => Department, (department) => department.doctors)
   department: Department;
 
-  @ManyToMany(
-    () => Specialty,
-    (specialty) => specialty.doctors,
-  )
+  @ManyToMany(() => Specialty, (specialty) => specialty.doctors)
   @JoinTable({
-    name: "doctor_specialties_hipaa",
-    joinColumn: { name: "doctorId", referencedColumnName: "id" },
-    inverseJoinColumn: { name: "specialtyId", referencedColumnName: "id" },
+    name: 'doctor_specialties_hipaa',
+    joinColumn: { name: 'doctorId', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'specialtyId', referencedColumnName: 'id' },
   })
   specialties: Specialty[];
 
-  @OneToMany(
-    () => MedicalLicense,
-    (license) => license.doctor,
-    { cascade: true },
-  )
+  @OneToMany(() => MedicalLicense, (license) => license.doctor, {
+    cascade: true,
+  })
   licenses: MedicalLicense[];
 
-  @OneToMany(
-    () => Schedule,
-    (schedule) => schedule.doctor,
-  )
+  @OneToMany(() => Schedule, (schedule) => schedule.doctor)
   schedules: Schedule[];
 
-  @OneToMany(
-    () => PerformanceMetric,
-    (metric) => metric.doctor,
-  )
+  @OneToMany(() => PerformanceMetric, (metric) => metric.doctor)
   performanceMetrics: PerformanceMetric[];
 
-  @OneToMany(
-    () => ContinuingEducation,
-    (education) => education.doctor,
-  )
+  @OneToMany(() => ContinuingEducation, (education) => education.doctor)
   continuingEducation: ContinuingEducation[];
 
   // PHI: Credentials - Encrypted
-  @Column({ type: "text", nullable: true })
+  @Column({ type: 'text', nullable: true })
   @Exclude({ toPlainOnly: true })
   private _credentials: string;
 
   // PHI: Contact Information - Encrypted
-  @Column({ type: "text", nullable: true })
+  @Column({ type: 'text', nullable: true })
   @Exclude({ toPlainOnly: true })
   private _contactInfo: string;
 
   // PHI: Notes - Encrypted
-  @Column({ type: "text", nullable: true })
+  @Column({ type: 'text', nullable: true })
   @Exclude({ toPlainOnly: true })
   private _notes: string;
 
@@ -168,7 +151,9 @@ export class DoctorHIPAA {
 
   // Getters and setters for encrypted fields
   get firstName(): string {
-    return this._firstName ? this.encryptionService?.decryptPHI(this._firstName) : '';
+    return this._firstName
+      ? this.encryptionService?.decryptPHI(this._firstName)
+      : '';
   }
 
   set firstName(value: string) {
@@ -176,7 +161,9 @@ export class DoctorHIPAA {
   }
 
   get lastName(): string {
-    return this._lastName ? this.encryptionService?.decryptPHI(this._lastName) : '';
+    return this._lastName
+      ? this.encryptionService?.decryptPHI(this._lastName)
+      : '';
   }
 
   set lastName(value: string) {
@@ -212,7 +199,9 @@ export class DoctorHIPAA {
   }
 
   set dateOfBirth(value: Date | null) {
-    this._dateOfBirth = value ? this.encryptionService?.encryptPHI(value.toISOString()) : '';
+    this._dateOfBirth = value
+      ? this.encryptionService?.encryptPHI(value.toISOString())
+      : '';
   }
 
   get credentials(): any {
@@ -222,7 +211,9 @@ export class DoctorHIPAA {
   }
 
   set credentials(value: any) {
-    this._credentials = value ? this.encryptionService?.encryptPHI(JSON.stringify(value)) : '';
+    this._credentials = value
+      ? this.encryptionService?.encryptPHI(JSON.stringify(value))
+      : '';
   }
 
   get contactInfo(): any {
@@ -232,7 +223,9 @@ export class DoctorHIPAA {
   }
 
   set contactInfo(value: any) {
-    this._contactInfo = value ? this.encryptionService?.encryptPHI(JSON.stringify(value)) : '';
+    this._contactInfo = value
+      ? this.encryptionService?.encryptPHI(JSON.stringify(value))
+      : '';
   }
 
   get notes(): string {
@@ -278,7 +271,15 @@ export class DoctorHIPAA {
 
   // Check if data contains PHI
   containsPHI(): boolean {
-    return !!(this._firstName || this._lastName || this._email || this._phone || 
-              this._dateOfBirth || this._credentials || this._contactInfo || this._notes);
+    return !!(
+      this._firstName ||
+      this._lastName ||
+      this._email ||
+      this._phone ||
+      this._dateOfBirth ||
+      this._credentials ||
+      this._contactInfo ||
+      this._notes
+    );
   }
-} 
+}

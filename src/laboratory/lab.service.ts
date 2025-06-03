@@ -45,7 +45,9 @@ export class LabService {
   }
 
   async recordResults(dto: RecordResultDto) {
-    const order = await this.labOrderRepo.findOne({ where: { id: dto.orderId } });
+    const order = await this.labOrderRepo.findOne({
+      where: { id: dto.orderId },
+    });
     if (!order) throw new NotFoundException('Lab order not found');
 
     const results = dto.results.map((item) =>
@@ -66,7 +68,9 @@ export class LabService {
   }
 
   async updateSpecimenStatus(dto: UpdateSpecimenStatusDto) {
-    const specimen = await this.specimenRepo.findOne({ where: { id: dto.specimenId } });
+    const specimen = await this.specimenRepo.findOne({
+      where: { id: dto.specimenId },
+    });
     if (!specimen) throw new NotFoundException('Specimen not found');
 
     specimen.status = dto.status;

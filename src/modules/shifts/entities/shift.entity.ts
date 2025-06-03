@@ -7,105 +7,99 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
-} from "typeorm"
-import { ShiftType, ShiftStatus } from "../../../common/enums"
-import { Nurse } from "../../nurses/entities/nurse.entity"
-import { Department } from "../../departments/entities/department.entity"
-import { ShiftHandoff } from "./shift-handoff.entity"
+} from 'typeorm';
+import { ShiftType, ShiftStatus } from '../../../common/enums';
+import { Nurse } from '../../nurses/entities/nurse.entity';
+import { Department } from '../../departments/entities/department.entity';
+import { ShiftHandoff } from './shift-handoff.entity';
 
-@Entity("shifts")
+@Entity('shifts')
 export class Shift {
-  @PrimaryGeneratedColumn("uuid")
-  id: string
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
-  nurseId: string
+  nurseId: string;
 
   @Column()
-  departmentId: string
+  departmentId: string;
 
-  @Column({ type: "timestamp" })
-  startTime: Date
+  @Column({ type: 'timestamp' })
+  startTime: Date;
 
-  @Column({ type: "timestamp" })
-  endTime: Date
+  @Column({ type: 'timestamp' })
+  endTime: Date;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: ShiftType,
   })
-  shiftType: ShiftType
+  shiftType: ShiftType;
 
   @Column({
-    type: "enum",
+    type: 'enum',
     enum: ShiftStatus,
     default: ShiftStatus.SCHEDULED,
   })
-  status: ShiftStatus
+  status: ShiftStatus;
 
-  @Column({ type: "text", nullable: true })
-  notes: string
+  @Column({ type: 'text', nullable: true })
+  notes: string;
 
-  @Column({ type: "json", nullable: true })
+  @Column({ type: 'json', nullable: true })
   breakTimes: {
-    startTime: string
-    endTime: string
-    type: "meal" | "rest"
-  }[]
+    startTime: string;
+    endTime: string;
+    type: 'meal' | 'rest';
+  }[];
 
-  @Column({ type: "decimal", precision: 4, scale: 2, nullable: true })
-  actualHoursWorked: number
+  @Column({ type: 'decimal', precision: 4, scale: 2, nullable: true })
+  actualHoursWorked: number;
 
-  @Column({ type: "timestamp", nullable: true })
-  clockInTime: Date
+  @Column({ type: 'timestamp', nullable: true })
+  clockInTime: Date;
 
-  @Column({ type: "timestamp", nullable: true })
-  clockOutTime: Date
+  @Column({ type: 'timestamp', nullable: true })
+  clockOutTime: Date;
 
   @Column({ default: false })
-  isOvertime: boolean
+  isOvertime: boolean;
 
-  @Column({ type: "decimal", precision: 5, scale: 2, nullable: true })
-  overtimeHours: number
+  @Column({ type: 'decimal', precision: 5, scale: 2, nullable: true })
+  overtimeHours: number;
 
-  @ManyToOne(
-    () => Nurse,
-    (nurse) => nurse.shifts,
-  )
-  @JoinColumn({ name: "nurseId" })
-  nurse: Nurse
+  @ManyToOne(() => Nurse, (nurse) => nurse.shifts)
+  @JoinColumn({ name: 'nurseId' })
+  nurse: Nurse;
 
-  @ManyToOne(
-    () => Department,
-    (department) => department.shifts,
-  )
-  @JoinColumn({ name: "departmentId" })
-  department: Department
+  @ManyToOne(() => Department, (department) => department.shifts)
+  @JoinColumn({ name: 'departmentId' })
+  department: Department;
 
-  @OneToMany(
-    () => ShiftHandoff,
-    (handoff) => handoff.fromShift,
-  )
-  handoffsGiven: ShiftHandoff[]
+  @OneToMany(() => ShiftHandoff, (handoff) => handoff.fromShift)
+  handoffsGiven: ShiftHandoff[];
 
-  @OneToMany(
-    () => ShiftHandoff,
-    (handoff) => handoff.toShift,
-  )
-  handoffsReceived: ShiftHandoff[]
+  @OneToMany(() => ShiftHandoff, (handoff) => handoff.toShift)
+  handoffsReceived: ShiftHandoff[];
 
   @CreateDateColumn()
-  createdAt: Date
+  createdAt: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date
+  updatedAt: Date;
 
   get scheduledHours(): number {
-    return (this.endTime.getTime() - this.startTime.getTime()) / (1000 * 60 * 60)
+    return (
+      (this.endTime.getTime() - this.startTime.getTime()) / (1000 * 60 * 60)
+    );
   }
 
   get isActive(): boolean {
-    const now = new Date()
-    return this.status === ShiftStatus.IN_PROGRESS && now >= this.startTime && now <= this.endTime
+    const now = new Date();
+    return (
+      this.status === ShiftStatus.IN_PROGRESS &&
+      now >= this.startTime &&
+      now <= this.endTime
+    );
   }
 }

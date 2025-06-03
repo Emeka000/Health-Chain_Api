@@ -17,4 +17,5 @@ export class LabResult {
 
   @Column({ nullable: true })
   validatedBy: string;
+    labOrder: any;
 }

@@ -10,38 +10,42 @@ import {
   IsNumber,
   Min,
   Max,
-} from "class-validator"
-import { ApiProperty } from "@nestjs/swagger"
-import { UserRole, CertificationType, SpecialtyType } from "../../../common/enums"
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import {
+  UserRole,
+  CertificationType,
+  SpecialtyType,
+} from '../../../common/enums';
 
 export class CreateNurseDto {
-  @ApiProperty({ example: "EMP001" })
+  @ApiProperty({ example: 'EMP001' })
   @IsString()
-  employeeId: string
+  employeeId: string;
 
-  @ApiProperty({ example: "John" })
+  @ApiProperty({ example: 'John' })
   @IsString()
-  firstName: string
+  firstName: string;
 
-  @ApiProperty({ example: "Doe" })
+  @ApiProperty({ example: 'Doe' })
   @IsString()
-  lastName: string
+  lastName: string;
 
-  @ApiProperty({ example: "john.doe@hospital.com" })
+  @ApiProperty({ example: 'john.doe@hospital.com' })
   @IsEmail()
-  email: string
+  email: string;
 
-  @ApiProperty({ example: "SecurePassword123!" })
+  @ApiProperty({ example: 'SecurePassword123!' })
   @IsString()
-  password: string
+  password: string;
 
-  @ApiProperty({ example: "+1234567890" })
+  @ApiProperty({ example: '+1234567890' })
   @IsPhoneNumber()
-  phoneNumber: string
+  phoneNumber: string;
 
   @ApiProperty({ enum: UserRole, example: UserRole.REGISTERED_NURSE })
   @IsEnum(UserRole)
-  role: UserRole
+  role: UserRole;
 
   @ApiProperty({
     enum: CertificationType,
@@ -50,7 +54,7 @@ export class CreateNurseDto {
   })
   @IsArray()
   @IsEnum(CertificationType, { each: true })
-  certifications: CertificationType[]
+  certifications: CertificationType[];
 
   @ApiProperty({
     enum: SpecialtyType,
@@ -59,52 +63,55 @@ export class CreateNurseDto {
   })
   @IsArray()
   @IsEnum(SpecialtyType, { each: true })
-  specialties: SpecialtyType[]
+  specialties: SpecialtyType[];
 
-  @ApiProperty({ example: "2023-01-15" })
+  @ApiProperty({ example: '2023-01-15' })
   @IsDateString()
-  hireDate: string
+  hireDate: string;
 
-  @ApiProperty({ example: "2025-12-31", required: false })
+  @ApiProperty({ example: '2025-12-31', required: false })
   @IsOptional()
   @IsDateString()
-  licenseExpiryDate?: string
+  licenseExpiryDate?: string;
 
-  @ApiProperty({ example: 1.0, description: "Work capacity (0.5 = part-time, 1.0 = full-time)" })
+  @ApiProperty({
+    example: 1.0,
+    description: 'Work capacity (0.5 = part-time, 1.0 = full-time)',
+  })
   @IsNumber()
   @Min(0.1)
   @Max(2.0)
-  workloadCapacity: number
+  workloadCapacity: number;
 
   @ApiProperty({
     example: {
-      preferredShifts: ["day", "evening"],
-      preferredDepartments: ["ICU", "ER"],
-      availabilityDays: ["monday", "tuesday", "wednesday"],
+      preferredShifts: ['day', 'evening'],
+      preferredDepartments: ['ICU', 'ER'],
+      availabilityDays: ['monday', 'tuesday', 'wednesday'],
     },
     required: false,
   })
   @IsOptional()
   @IsObject()
   preferences?: {
-    preferredShifts?: string[]
-    preferredDepartments?: string[]
-    availabilityDays?: string[]
-  }
+    preferredShifts?: string[];
+    preferredDepartments?: string[];
+    availabilityDays?: string[];
+  };
 
   @ApiProperty({
     example: {
-      name: "Jane Doe",
-      relationship: "Spouse",
-      phoneNumber: "+1987654321",
+      name: 'Jane Doe',
+      relationship: 'Spouse',
+      phoneNumber: '+1987654321',
     },
     required: false,
   })
   @IsOptional()
   @IsObject()
   emergencyContact?: {
-    name: string
-    relationship: string
-    phoneNumber: string
-  }
+    name: string;
+    relationship: string;
+    phoneNumber: string;
+  };
 }

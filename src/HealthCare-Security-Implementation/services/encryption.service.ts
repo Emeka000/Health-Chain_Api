@@ -25,12 +25,12 @@ export class EncryptionService {
     const iv = crypto.randomBytes(this.ivLength);
     const cipher = crypto.createCipher(this.algorithm, this.encryptionKey);
     cipher.setAAD(Buffer.from('healthcare-data', 'utf8'));
-    
+
     let encrypted = cipher.update(data, 'utf8', 'base64');
     encrypted += cipher.final('base64');
-    
+
     const tag = cipher.getAuthTag();
-    
+
     return {
       encrypted,
       iv: iv.toString('base64'),
@@ -41,14 +41,18 @@ export class EncryptionService {
   /**
    * Decrypt sensitive healthcare data
    */
-  decrypt(encryptedData: { encrypted: string; iv: string; tag: string }): string {
+  decrypt(encryptedData: {
+    encrypted: string;
+    iv: string;
+    tag: string;
+  }): string {
     const decipher = crypto.createDecipher(this.algorithm, this.encryptionKey);
     decipher.setAAD(Buffer.from('healthcare-data', 'utf8'));
     decipher.setAuthTag(Buffer.from(encryptedData.tag, 'base64'));
-    
+
     let decrypted = decipher.update(encryptedData.encrypted, 'base64', 'utf8');
     decrypted += decipher.final('utf8');
-    
+
     return decrypted;
   }
 
@@ -65,7 +69,10 @@ export class EncryptionService {
   /**
    * Generate secure device certificate
    */
-  generateDeviceCertificate(deviceId: string): { certificate: string; privateKey: string } {
+  generateDeviceCertificate(deviceId: string): {
+    certificate: string;
+    privateKey: string;
+  } {
     const { publicKey, privateKey } = crypto.generateKeyPairSync('rsa', {
       modulusLength: 2048,
       publicKeyEncoding: {
@@ -79,7 +86,7 @@ export class EncryptionService {
     });
 
     const certificate = this.signDeviceCertificate(deviceId, publicKey);
-    
+
     return { certificate, privateKey };
   }
 
@@ -96,6 +103,8 @@ export class EncryptionService {
       .update(JSON.stringify(certificateData))
       .sign(this.encryptionKey, 'base64');
 
-    return Buffer.from(JSON.stringify({ ...certificateData, signature })).toString('base64');
+    return Buffer.from(
+      JSON.stringify({ ...certificateData, signature }),
+    ).toString('base64');
   }
 }

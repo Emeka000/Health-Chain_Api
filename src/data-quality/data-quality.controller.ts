@@ -8,7 +8,7 @@ export class DataQualityController {
   @Get('validate-code')
   async validateCode(
     @Query('type') type: 'icd10' | 'cpt' | 'loinc',
-    @Query('code') code: string
+    @Query('code') code: string,
   ) {
     await this.codeValidation.loadReferenceCodes();
     let valid = false;

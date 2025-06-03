@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Patient } from './patient.entity';
 import { BillItem } from './bill-item.entity';
 import { Payment } from './payment.entity';
@@ -9,7 +18,7 @@ export enum BillStatus {
   PAID = 'paid',
   PARTIALLY_PAID = 'partially_paid',
   OVERDUE = 'overdue',
-  CANCELLED = 'cancelled'
+  CANCELLED = 'cancelled',
 }
 
 @Entity('bills')
@@ -32,13 +41,25 @@ export class Bill {
   @Column({ type: 'decimal', precision: 10, scale: 2, name: 'tax_amount' })
   taxAmount: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, name: 'discount_amount', default: 0 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    name: 'discount_amount',
+    default: 0,
+  })
   discountAmount: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, name: 'total_amount' })
   totalAmount: number;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, name: 'paid_amount', default: 0 })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    name: 'paid_amount',
+    default: 0,
+  })
   paidAmount: number;
 
   @Column({ type: 'decimal', precision: 10, scale: 2, name: 'balance_amount' })
@@ -53,14 +74,14 @@ export class Bill {
   @Column({ name: 'patient_id' })
   patientId: string;
 
-  @ManyToOne(() => Patient, patient => patient.bills)
+  @ManyToOne(() => Patient, (patient) => patient.bills)
   @JoinColumn({ name: 'patient_id' })
   patient: Patient;
 
-  @OneToMany(() => BillItem, billItem => billItem.bill, { cascade: true })
+  @OneToMany(() => BillItem, (billItem) => billItem.bill, { cascade: true })
   items: BillItem[];
 
-  @OneToMany(() => Payment, payment => payment.bill)
+  @OneToMany(() => Payment, (payment) => payment.bill)
   payments: Payment[];
 
   @CreateDateColumn({ name: 'created_at' })

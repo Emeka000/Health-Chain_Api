@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Hospital } from './hospital.entity';
 import { Department } from './department.entity';
 
@@ -10,14 +18,14 @@ export enum StaffRole {
   SUPPORT = 'support',
   SECURITY = 'security',
   PHARMACIST = 'pharmacist',
-  THERAPIST = 'therapist'
+  THERAPIST = 'therapist',
 }
 
 export enum EmploymentType {
   FULL_TIME = 'full_time',
   PART_TIME = 'part_time',
   CONTRACT = 'contract',
-  INTERN = 'intern'
+  INTERN = 'intern',
 }
 
 @Entity('staff')
@@ -64,7 +72,11 @@ export class Staff {
   @Column({ type: 'decimal', precision: 10, scale: 2 })
   salary: number;
 
-  @Column({ type: 'enum', enum: ['active', 'inactive', 'on_leave'], default: 'active' })
+  @Column({
+    type: 'enum',
+    enum: ['active', 'inactive', 'on_leave'],
+    default: 'active',
+  })
   status: string;
 
   @Column({ name: 'hospital_id' })
@@ -73,11 +85,11 @@ export class Staff {
   @Column({ name: 'department_id' })
   departmentId: string;
 
-  @ManyToOne(() => Hospital, hospital => hospital.staff)
+  @ManyToOne(() => Hospital, (hospital) => hospital.staff)
   @JoinColumn({ name: 'hospital_id' })
   hospital: Hospital;
 
-  @ManyToOne(() => Department, department => department.staff)
+  @ManyToOne(() => Department, (department) => department.staff)
   @JoinColumn({ name: 'department_id' })
   department: Department;
 

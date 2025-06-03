@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('compliance_logs')
 export class ComplianceLog {
@@ -46,4 +52,4 @@ export class ComplianceLog {
 
   @UpdateDateColumn()
   updatedAt: Date;
-} 
+}

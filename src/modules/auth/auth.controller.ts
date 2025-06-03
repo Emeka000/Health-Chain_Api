@@ -1,10 +1,10 @@
-import { Controller, Post, UseGuards, Request } from "@nestjs/common"
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger"
-import type { AuthService } from "./auth.service"
-import { LocalAuthGuard } from "./guards/local-auth.guard"
+import { Controller, Post, UseGuards, Request } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import type { AuthService } from './auth.service';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
-@ApiTags("auth")
-@Controller("auth")
+@ApiTags('auth')
+@Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 

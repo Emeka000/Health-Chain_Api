@@ -1,14 +1,21 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { PrescriptionItem } from './prescription-item.entity';
 import { Patient } from './patient.entity';
-
 
 export enum PrescriptionStatus {
   PENDING = 'PENDING',
   VERIFIED = 'VERIFIED',
   FILLED = 'FILLED',
   DISPENSED = 'DISPENSED',
-  CANCELLED = 'CANCELLED'
+  CANCELLED = 'CANCELLED',
 }
 
 @Entity('prescriptions')
@@ -19,7 +26,7 @@ export class Prescription {
   @Column({ unique: true })
   prescriptionNumber: string;
 
-  @ManyToOne(() => Patient, patient => patient.prescriptions)
+  @ManyToOne(() => Patient, (patient) => patient.prescriptions)
   patient: Patient;
 
   @Column()
@@ -34,7 +41,11 @@ export class Prescription {
   @Column()
   prescribedDate: Date;
 
-  @Column({ type: 'enum', enum: PrescriptionStatus, default: PrescriptionStatus.PENDING })
+  @Column({
+    type: 'enum',
+    enum: PrescriptionStatus,
+    default: PrescriptionStatus.PENDING,
+  })
   status: PrescriptionStatus;
 
   @Column({ nullable: true })
@@ -55,7 +66,9 @@ export class Prescription {
   @Column({ default: false })
   isControlledSubstance: boolean;
 
-  @OneToMany(() => PrescriptionItem, item => item.prescription, { cascade: true })
+  @OneToMany(() => PrescriptionItem, (item) => item.prescription, {
+    cascade: true,
+  })
   items: PrescriptionItem[];
 
   @CreateDateColumn()

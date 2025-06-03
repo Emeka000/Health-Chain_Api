@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 export enum ConfigType {
   SYSTEM = 'system',
@@ -6,7 +12,7 @@ export enum ConfigType {
   SECURITY = 'security',
   NOTIFICATION = 'notification',
   INTEGRATION = 'integration',
-  BUSINESS = 'business'
+  BUSINESS = 'business',
 }
 
 @Entity('system_configurations')

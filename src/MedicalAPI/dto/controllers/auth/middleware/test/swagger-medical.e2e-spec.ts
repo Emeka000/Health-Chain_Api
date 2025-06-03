@@ -27,9 +27,7 @@ describe('Medical API Documentation (e2e)', () => {
   });
 
   it('should require authentication for patient endpoints', () => {
-    return request(app.getHttpServer())
-      .get('/patients')
-      .expect(401);
+    return request(app.getHttpServer()).get('/patients').expect(401);
   });
 
   afterAll(async () => {

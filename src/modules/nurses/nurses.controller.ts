@@ -1,17 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Query, UseGuards } from "@nestjs/common"
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger"
-import type { NursesService } from "./nurses.service"
-import type { CreateNurseDto } from "./dto/create-nurse.dto"
-import type { UpdateNurseDto } from "./dto/update-nurse.dto"
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard"
-import { RolesGuard } from "../auth/guards/roles.guard"
-import { Roles } from "../auth/decorators/roles.decorator"
-import { UserRole } from "../../common/enums"
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import type { NursesService } from './nurses.service';
+import type { CreateNurseDto } from './dto/create-nurse.dto';
+import type { UpdateNurseDto } from './dto/update-nurse.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '../../common/enums';
 
-@ApiTags("nurses")
+@ApiTags('nurses')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Controller("nurses")
+@Controller('nurses')
 export class NursesController {
   constructor(private readonly nursesService: NursesService) {}
 
@@ -24,15 +38,20 @@ export class NursesController {
   }
 
   @Get()
-  @ApiOperation({ summary: "Get all nurses" })
-  @ApiResponse({ status: 200, description: "List of nurses" })
+  @ApiOperation({ summary: 'Get all nurses' })
+  @ApiResponse({ status: 200, description: 'List of nurses' })
   findAll(
     @Query('role') role?: string,
     @Query('specialty') specialty?: string,
     @Query('certification') certification?: string,
     @Query('isActive') isActive?: boolean,
   ) {
-    return this.nursesService.findAll({ role, specialty, certification, isActive })
+    return this.nursesService.findAll({
+      role,
+      specialty,
+      certification,
+      isActive,
+    });
   }
 
   @Get(':id')
@@ -42,11 +61,11 @@ export class NursesController {
     return this.nursesService.findOne(id);
   }
 
-  @Patch(":id")
+  @Patch(':id')
   @Roles(UserRole.ADMIN, UserRole.NURSE_MANAGER)
-  @ApiOperation({ summary: "Update nurse" })
-  @ApiResponse({ status: 200, description: "Nurse updated successfully" })
+  @ApiOperation({ summary: 'Update nurse' })
+  @ApiResponse({ status: 200, description: 'Nurse updated successfully' })
   update(@Param('id') id: string, @Body() updateNurseDto: UpdateNurseDto) {
-    return this.nursesService.update(id, updateNurseDto)
+    return this.nursesService.update(id, updateNurseDto);
   }
 }

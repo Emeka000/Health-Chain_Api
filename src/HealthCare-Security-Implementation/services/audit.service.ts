@@ -28,12 +28,16 @@ export class AuditService {
   async logAccess(data: AuditLogData): Promise<void> {
     const auditLog = this.auditRepository.create(data);
     await this.auditRepository.save(auditLog);
-    
+
     // Check for suspicious patterns
     await this.detectSuspiciousActivity(data);
   }
 
-  async getAuditTrail(patientId: string, startDate?: Date, endDate?: Date): Promise<AuditLog[]> {
+  async getAuditTrail(
+    patientId: string,
+    startDate?: Date,
+    endDate?: Date,
+  ): Promise<AuditLog[]> {
     const query = this.auditRepository
       .createQueryBuilder('audit')
       .where('audit.patientId = :patientId', { patientId })
@@ -50,9 +54,12 @@ export class AuditService {
     return query.getMany();
   }
 
-  async getUserActivity(userId: string, hours: number = 24): Promise<AuditLog[]> {
+  async getUserActivity(
+    userId: string,
+    hours: number = 24,
+  ): Promise<AuditLog[]> {
     const since = new Date(Date.now() - hours * 60 * 60 * 1000);
-    
+
     return this.auditRepository.find({
       where: {
         userId,
@@ -75,7 +82,9 @@ export class AuditService {
     if (recentFailures >= 5) {
       // Trigger security incident
       // This would integrate with your SecurityIncidentService
-      console.warn(`Suspicious activity detected for user ${data.userId}: ${recentFailures} failed attempts`);
+      console.warn(
+        `Suspicious activity detected for user ${data.userId}: ${recentFailures} failed attempts`,
+      );
     }
 
     // Check for unusual access patterns
@@ -89,7 +98,9 @@ export class AuditService {
       });
 
       if (recentAccess > 10) {
-        console.warn(`Unusual access pattern detected: User ${data.userId} accessed patient ${data.patientId} ${recentAccess} times in the last hour`);
+        console.warn(
+          `Unusual access pattern detected: User ${data.userId} accessed patient ${data.patientId} ${recentAccess} times in the last hour`,
+        );
       }
     }
   }

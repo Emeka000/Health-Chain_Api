@@ -9,12 +9,16 @@ import { AuditLog } from '../entities/audit-log.entity';
 export class NotificationService {
   private readonly logger = new Logger(NotificationService.name);
 
-  async sendOverdueAssessmentNotification(assessment: ComplianceAssessment): Promise<void> {
-    this.logger.log(`Sending overdue assessment notification: ${assessment.id}`);
-    
+  async sendOverdueAssessmentNotification(
+    assessment: ComplianceAssessment,
+  ): Promise<void> {
+    this.logger.log(
+      `Sending overdue assessment notification: ${assessment.id}`,
+    );
+
     // Implementation would integrate with your notification system
     // Examples: Email, Slack, Teams, SMS, etc.
-    
+
     const notification = {
       type: 'overdue_assessment',
       title: 'Compliance Assessment Overdue',
@@ -25,7 +29,9 @@ export class NotificationService {
         assessmentId: assessment.id,
         requirementCode: assessment.requirement?.code,
         dueDate: assessment.dueDate,
-        daysOverdue: Math.floor((Date.now() - assessment.dueDate.getTime()) / (1000 * 60 * 60 * 24)),
+        daysOverdue: Math.floor(
+          (Date.now() - assessment.dueDate.getTime()) / (1000 * 60 * 60 * 24),
+        ),
       },
     };
 
@@ -37,8 +43,10 @@ export class NotificationService {
     assessment: ComplianceAssessment,
     requirement: ComplianceRequirement,
   ): Promise<void> {
-    this.logger.log(`Sending upcoming assessment notification: ${assessment.id}`);
-    
+    this.logger.log(
+      `Sending upcoming assessment notification: ${assessment.id}`,
+    );
+
     const notification = {
       type: 'upcoming_assessment',
       title: 'Compliance Assessment Due Soon',
@@ -57,7 +65,7 @@ export class NotificationService {
 
   async sendSuspiciousActivityAlert(auditLog: AuditLog): Promise<void> {
     this.logger.log(`Sending suspicious activity alert: ${auditLog.id}`);
-    
+
     const notification = {
       type: 'suspicious_activity',
       title: 'HIPAA: Suspicious Activity Detected',
@@ -79,13 +87,17 @@ export class NotificationService {
 
   async sendPotentialViolationAlert(auditLog: AuditLog): Promise<void> {
     this.logger.log(`Sending potential violation alert: ${auditLog.id}`);
-    
+
     const notification = {
       type: 'potential_violation',
       title: 'HIPAA: Potential Violation Detected',
       message: `Potential HIPAA violation: unauthorized PHI access`,
       severity: 'critical',
-      recipients: ['privacy-officer@company.com', 'compliance@company.com', 'legal@company.com'],
+      recipients: [
+        'privacy-officer@company.com',
+        'compliance@company.com',
+        'legal@company.com',
+      ],
       data: {
         auditLogId: auditLog.id,
         userId: auditLog.userId,
@@ -98,9 +110,12 @@ export class NotificationService {
     await this.sendNotification(notification);
   }
 
-  async sendExcessiveAccessAlert(userId: number, accessCount: number): Promise<void> {
+  async sendExcessiveAccessAlert(
+    userId: number,
+    accessCount: number,
+  ): Promise<void> {
     this.logger.log(`Sending excessive access alert for user: ${userId}`);
-    
+
     const notification = {
       type: 'excessive_access',
       title: 'HIPAA: Excessive PHI Access',
@@ -119,7 +134,7 @@ export class NotificationService {
 
   async sendUnusualPatternAlert(pattern: any): Promise<void> {
     this.logger.log(`Sending unusual pattern alert`);
-    
+
     const notification = {
       type: 'unusual_pattern',
       title: 'HIPAA: Unusual Access Pattern',
@@ -137,7 +152,7 @@ export class NotificationService {
     program: TrainingProgram,
   ): Promise<void> {
     this.logger.log(`Sending training assignment notification: ${record.id}`);
-    
+
     const notification = {
       type: 'training_assignment',
       title: 'New Training Assignment',
@@ -160,13 +175,16 @@ export class NotificationService {
     passed: boolean,
   ): Promise<void> {
     this.logger.log(`Sending training completion notification: ${record.id}`);
-    
+
     const notification = {
       type: 'training_completion',
       title: `Training ${passed ? 'Completed' : 'Failed'}`,
       message: `Training ${passed ? 'completed successfully' : 'failed - retake required'}`,
       severity: passed ? 'low' : 'medium',
-      recipients: [`employee-${record.employeeId}@company.com`, 'training@company.com'],
+      recipients: [
+        `employee-${record.employeeId}@company.com`,
+        'training@company.com',
+      ],
       data: {
         recordId: record.id,
         score: record.score,
@@ -178,13 +196,15 @@ export class NotificationService {
     await this.sendNotification(notification);
   }
 
-  async sendExpiringTrainingNotification(record: TrainingRecord): Promise<void> {
+  async sendExpiringTrainingNotification(
+    record: TrainingRecord,
+  ): Promise<void> {
     this.logger.log(`Sending expiring training notification: ${record.id}`);
-    
+
     const daysUntilExpiration = Math.floor(
-      (record.expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+      (record.expirationDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24),
     );
-    
+
     const notification = {
       type: 'expiring_training',
       title: 'Training Certification Expiring',
@@ -203,7 +223,7 @@ export class NotificationService {
 
   private async sendNotification(notification: any): Promise<void> {
     // Implement notification logic here
-    
+
     this.logger.debug(`Notification sent: ${notification.type}`, notification);
   }
 }

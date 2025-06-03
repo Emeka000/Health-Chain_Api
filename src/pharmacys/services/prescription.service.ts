@@ -1,14 +1,20 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DrugService } from './drug.service';
 import { InventoryService } from './inventory.service';
 import { Patient } from '../entities/patient.entity';
 import { PrescriptionItem } from '../entities/prescription-item.entity';
-import { Prescription, PrescriptionStatus } from '../entities/prescription.entity';
+import {
+  Prescription,
+  PrescriptionStatus,
+} from '../entities/prescription.entity';
 import { SafetyAlertService } from './safety-alert.service';
 import { ControlledSubstanceService } from './controlled-substance.service';
-
 
 export interface CreatePrescriptionDto {
   patientId: string;
@@ -42,9 +48,11 @@ export class PrescriptionService {
     private controlledSubstanceService: ControlledSubstanceService,
   ) {}
 
-  async createPrescription(createDto: CreatePrescriptionDto): Promise<Prescription> {
+  async createPrescription(
+    createDto: CreatePrescriptionDto,
+  ): Promise<Prescription> {
     const patient = await this.patientRepository.findOne({
-      where: { id: createDto.patientId }
+      where: { id: createDto.patientId },
     });
 
     if (!patient) {
@@ -57,20 +65,21 @@ export class PrescriptionService {
     const prescription = this.prescriptionRepository.create({
       ...createDto,
       prescriptionNumber,
-      patient
+      patient,
     });
 
-    const savedPrescription = await this.prescriptionRepository.save(prescription);
+    const savedPrescription =
+      await this.prescriptionRepository.save(prescription);
 
     // Create prescription items
     for (const itemDto of createDto.items) {
       const drug = await this.drugService.findById(itemDto.drugId);
-      
+
       const prescriptionItem = this.prescriptionItemRepository.create({
         ...itemDto,
         prescriptionId: savedPrescription.id,
         unitPrice: drug.unitPrice,
-        totalPrice: drug.unitPrice * itemDto.quantity
+        totalPrice: drug.unitPrice * itemDto.quantity,
       });
 
       await this.prescriptionItemRepository.save(prescriptionItem);
@@ -86,7 +95,10 @@ export class PrescriptionService {
     return await this.findById(savedPrescription.id);
   }
 
-  async verifyPrescription(id: string, pharmacistId: string): Promise<Prescription> {
+  async verifyPrescription(
+    id: string,
+    pharmacistId: string,
+  ): Promise<Prescription> {
     const prescription = await this.findById(id);
 
     if (prescription.status !== PrescriptionStatus.PENDING) {
@@ -103,22 +115,29 @@ export class PrescriptionService {
     return await this.prescriptionRepository.save(prescription);
   }
 
-  async fillPrescription(id: string, pharmacistId: string): Promise<Prescription> {
+  async fillPrescription(
+    id: string,
+    pharmacistId: string,
+  ): Promise<Prescription> {
     const prescription = await this.findById(id);
 
     if (prescription.status !== PrescriptionStatus.VERIFIED) {
-      throw new BadRequestException('Prescription must be verified before filling');
+      throw new BadRequestException(
+        'Prescription must be verified before filling',
+      );
     }
 
     // Check inventory availability
     for (const item of prescription.items) {
       const isAvailable = await this.inventoryService.checkAvailability(
         item.drugId,
-        item.quantity
+        item.quantity,
       );
 
       if (!isAvailable) {
-        throw new BadRequestException(`Insufficient inventory for ${item.drug.brandName}`);
+        throw new BadRequestException(
+          `Insufficient inventory for ${item.drug.brandName}`,
+        );
       }
     }
 
@@ -133,7 +152,7 @@ export class PrescriptionService {
           item.quantity,
           prescription.id,
           prescription.patientId,
-          pharmacistId
+          pharmacistId,
         );
       }
     }
@@ -142,11 +161,16 @@ export class PrescriptionService {
     return await this.prescriptionRepository.save(prescription);
   }
 
-  async dispensePrescription(id: string, pharmacistId: string): Promise<Prescription> {
+  async dispensePrescription(
+    id: string,
+    pharmacistId: string,
+  ): Promise<Prescription> {
     const prescription = await this.findById(id);
 
     if (prescription.status !== PrescriptionStatus.FILLED) {
-      throw new BadRequestException('Prescription must be filled before dispensing');
+      throw new BadRequestException(
+        'Prescription must be filled before dispensing',
+      );
     }
 
     prescription.status = PrescriptionStatus.DISPENSED;
@@ -158,7 +182,7 @@ export class PrescriptionService {
 
   private async performSafetyChecks(prescription: Prescription): Promise<void> {
     const patient = prescription.patient;
-    const drugIds = prescription.items.map(item => item.drugId);
+    const drugIds = prescription.items.map((item) => item.drugId);
 
     // Check drug interactions
     const interactions = await this.drugService.checkDrugInteractions(drugIds);
@@ -166,16 +190,16 @@ export class PrescriptionService {
       await this.safetyAlertService.createDrugInteractionAlert(
         prescription.id,
         patient.id,
-        interaction
+        interaction,
       );
     }
 
     // Check allergies
     for (const item of prescription.items) {
-      const hasAllergy = patient.allergies.some(allergy =>
-        item.drug.allergyTriggers.some(trigger =>
-          trigger.toLowerCase().includes(allergy.toLowerCase())
-        )
+      const hasAllergy = patient.allergies.some((allergy) =>
+        item.drug.allergyTriggers.some((trigger) =>
+          trigger.toLowerCase().includes(allergy.toLowerCase()),
+        ),
       );
 
       if (hasAllergy) {
@@ -183,7 +207,7 @@ export class PrescriptionService {
           prescription.id,
           patient.id,
           item.drugId,
-          `Patient allergic to components in ${item.drug.brandName}`
+          `Patient allergic to components in ${item.drug.brandName}`,
         );
       }
     }
@@ -192,7 +216,7 @@ export class PrescriptionService {
   async findById(id: string): Promise<Prescription> {
     const prescription = await this.prescriptionRepository.findOne({
       where: { id },
-      relations: ['patient', 'items', 'items.drug']
+      relations: ['patient', 'items', 'items.drug'],
     });
 
     if (!prescription) {
@@ -204,7 +228,9 @@ export class PrescriptionService {
 
   private async generatePrescriptionNumber(): Promise<string> {
     const timestamp = Date.now().toString().slice(-8);
-    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    const random = Math.floor(Math.random() * 1000)
+      .toString()
+      .padStart(3, '0');
     return `RX${timestamp}${random}`;
   }
 }

@@ -1,5 +1,5 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Department } from "./department.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Department } from './department.entity';
 
 @Entity()
 export class Workflow {
@@ -12,6 +12,6 @@ export class Workflow {
   @Column('jsonb')
   steps: any; // Define structure of workflow steps
 
-  @ManyToOne(() => Department, department => department.workflows)
+  @ManyToOne(() => Department, (department) => department.workflows)
   department: Department;
 }

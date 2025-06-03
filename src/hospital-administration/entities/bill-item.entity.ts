@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Bill } from './bill.entity';
 
 export enum ItemType {
@@ -8,7 +15,7 @@ export enum ItemType {
   ROOM_CHARGE = 'room_charge',
   LAB_TEST = 'lab_test',
   EQUIPMENT_USAGE = 'equipment_usage',
-  OTHER = 'other'
+  OTHER = 'other',
 }
 
 @Entity('bill_items')
@@ -37,7 +44,7 @@ export class BillItem {
   @Column({ name: 'bill_id' })
   billId: string;
 
-  @ManyToOne(() => Bill, bill => bill.items, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Bill, (bill) => bill.items, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'bill_id' })
   bill: Bill;
 

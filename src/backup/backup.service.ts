@@ -31,13 +31,18 @@ export class BackupService {
     return encryptFile(filePath, this.config.get('BACKUP_ENCRYPTION_KEY'));
   }
 
-  async getLastBackup(): Promise<{ success: boolean; timestamp: string; verified?: boolean; message?: string }> {
+  async getLastBackup(): Promise<{
+    success: boolean;
+    timestamp: string;
+    verified?: boolean;
+    message?: string;
+  }> {
     // TODO: Implement actual logic to retrieve the last backup info
     return {
       success: true,
       timestamp: new Date().toISOString(),
       verified: true,
-      message: 'Last backup was successful'
+      message: 'Last backup was successful',
     };
   }
 }

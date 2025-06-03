@@ -22,7 +22,7 @@ import { PrescriptionService } from './services/prescription.service';
 import { SafetyAlertService } from './services/safety-alert.service';
 
 @Module({
-   imports: [
+  imports: [
     TypeOrmModule.forFeature([
       Drug,
       InventoryItem,
@@ -40,7 +40,7 @@ import { SafetyAlertService } from './services/safety-alert.service';
     SafetyAlertController,
     ControlledSubstanceController,
     PatientController,
-    PharmacysController
+    PharmacysController,
   ],
   providers: [
     DrugService,
@@ -55,7 +55,7 @@ import { SafetyAlertService } from './services/safety-alert.service';
     PrescriptionService,
     SafetyAlertService,
     ControlledSubstanceService,
-    PharmacysService
+    PharmacysService,
   ],
 })
 export class PharmacysModule {}

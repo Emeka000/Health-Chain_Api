@@ -23,13 +23,20 @@ export class MedicalDeviceAuthService {
     model: string;
     serialNumber?: string;
     associatedFacilityId: string;
-  }): Promise<{ device: MedicalDevice; certificate: string; privateKey: string }> {
-    
-    const { certificate, privateKey } = this.encryptionService.generateDeviceCertificate(deviceData.deviceId);
-    
+  }): Promise<{
+    device: MedicalDevice;
+    certificate: string;
+    privateKey: string;
+  }> {
+    const { certificate, privateKey } =
+      this.encryptionService.generateDeviceCertificate(deviceData.deviceId);
+
     const device = this.deviceRepository.create({
       ...deviceData,
-      certificateHash: crypto.createHash('sha256').update(certificate).digest('hex'),
+      certificateHash: crypto
+        .createHash('sha256')
+        .update(certificate)
+        .digest('hex'),
       certificateExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
     });
 
@@ -49,7 +56,12 @@ export class MedicalDeviceAuthService {
     return { device: savedDevice, certificate, privateKey };
   }
 
-  async authenticateDevice(deviceId: string, certificate: string, signature: string, challenge: string): Promise<boolean> {
+  async authenticateDevice(
+    deviceId: string,
+    certificate: string,
+    signature: string,
+    challenge: string,
+  ): Promise<boolean> {
     const device = await this.deviceRepository.findOne({
       where: { deviceId, isActive: true },
     });
@@ -70,7 +82,10 @@ export class MedicalDeviceAuthService {
     }
 
     // Verify certificate hasn't expired
-    if (device.certificateExpiresAt && device.certificateExpiresAt < new Date()) {
+    if (
+      device.certificateExpiresAt &&
+      device.certificateExpiresAt < new Date()
+    ) {
       await this.auditService.logAccess({
         userId: 'system',
         userRole: 'system',
@@ -86,7 +101,10 @@ export class MedicalDeviceAuthService {
     }
 
     // Verify certificate hash matches
-    const certificateHash = crypto.createHash('sha256').update(certificate).digest('hex');
+    const certificateHash = crypto
+      .createHash('sha256')
+      .update(certificate)
+      .digest('hex');
     if (certificateHash !== device.certificateHash) {
       await this.auditService.logAccess({
         userId: 'system',
@@ -103,8 +121,12 @@ export class MedicalDeviceAuthService {
     }
 
     // Verify signature
-    const isValidSignature = this.verifyDeviceSignature(certificate, challenge, signature);
-    
+    const isValidSignature = this.verifyDeviceSignature(
+      certificate,
+      challenge,
+      signature,
+    );
+
     if (!isValidSignature) {
       await this.auditService.logAccess({
         userId: 'system',
@@ -139,11 +161,17 @@ export class MedicalDeviceAuthService {
     return true;
   }
 
-  private verifyDeviceSignature(certificate: string, challenge: string, signature: string): boolean {
+  private verifyDeviceSignature(
+    certificate: string,
+    challenge: string,
+    signature: string,
+  ): boolean {
     try {
-      const certData = JSON.parse(Buffer.from(certificate, 'base64').toString());
+      const certData = JSON.parse(
+        Buffer.from(certificate, 'base64').toString(),
+      );
       const publicKey = certData.publicKey;
-      
+
       const verify = crypto.createVerify('RSA-SHA256');
       verify.update(challenge);
       return verify.verify(publicKey, signature, 'base64');
@@ -155,7 +183,7 @@ export class MedicalDeviceAuthService {
   async revokeDevice(deviceId: string): Promise<void> {
     await this.deviceRepository.update(
       { deviceId },
-      { isActive: false, updatedAt: new Date() }
+      { isActive: false, updatedAt: new Date() },
     );
 
     await this.auditService.logAccess({

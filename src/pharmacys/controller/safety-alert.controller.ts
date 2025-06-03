@@ -14,12 +14,12 @@ export class SafetyAlertController {
   @Put(':id/resolve')
   async resolveAlert(
     @Param('id') id: string,
-    @Body() body: { pharmacistId: string; resolution: string }
+    @Body() body: { pharmacistId: string; resolution: string },
   ): Promise<SafetyAlert> {
     return await this.safetyAlertService.resolveAlert(
       id,
       body.pharmacistId,
-      body.resolution
+      body.resolution,
     );
   }
 }

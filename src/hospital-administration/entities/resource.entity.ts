@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Department } from './department.entity';
 import { ResourceAllocation } from './resource-allocation.entity';
 
@@ -6,14 +15,14 @@ export enum ResourceType {
   EQUIPMENT = 'equipment',
   MEDICINE = 'medicine',
   SUPPLY = 'supply',
-  VEHICLE = 'vehicle'
+  VEHICLE = 'vehicle',
 }
 
 export enum ResourceStatus {
   AVAILABLE = 'available',
   IN_USE = 'in_use',
   MAINTENANCE = 'maintenance',
-  OUT_OF_ORDER = 'out_of_order'
+  OUT_OF_ORDER = 'out_of_order',
 }
 
 @Entity('resources')
@@ -42,7 +51,13 @@ export class Resource {
   @Column({ name: 'purchase_date', nullable: true })
   purchaseDate: Date;
 
-  @Column({ type: 'decimal', precision: 10, scale: 2, name: 'purchase_cost', nullable: true })
+  @Column({
+    type: 'decimal',
+    precision: 10,
+    scale: 2,
+    name: 'purchase_cost',
+    nullable: true,
+  })
   purchaseCost: number;
 
   @Column({ name: 'current_quantity' })
@@ -57,17 +72,21 @@ export class Resource {
   @Column()
   unit: string;
 
-  @Column({ type: 'enum', enum: ResourceStatus, default: ResourceStatus.AVAILABLE })
+  @Column({
+    type: 'enum',
+    enum: ResourceStatus,
+    default: ResourceStatus.AVAILABLE,
+  })
   status: ResourceStatus;
 
   @Column({ name: 'department_id' })
   departmentId: string;
 
-  @ManyToOne(() => Department, department => department)
+  @ManyToOne(() => Department, (department) => department)
   @JoinColumn({ name: 'department_id' })
   department: Department;
 
-  @OneToMany(() => ResourceAllocation, allocation => allocation.resource)
+  @OneToMany(() => ResourceAllocation, (allocation) => allocation.resource)
   allocations: ResourceAllocation[];
 
   @CreateDateColumn({ name: 'created_at' })

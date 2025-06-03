@@ -1,60 +1,68 @@
-import { IsString, IsNumber, IsDate, IsEnum, IsOptional, ValidateNested, IsUUID } from "class-validator"
-import { Type } from "class-transformer"
-import { MetricType } from "../enums/metric-type.enum"
+import {
+  IsString,
+  IsNumber,
+  IsDate,
+  IsEnum,
+  IsOptional,
+  ValidateNested,
+  IsUUID,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { MetricType } from '../enums/metric-type.enum';
 
 class AdditionalDataDto {
   @IsOptional()
   @IsNumber()
-  patientCount?: number
+  patientCount?: number;
 
   @IsOptional()
-  @IsEnum(["LOW", "MEDIUM", "HIGH"])
-  caseComplexity?: "LOW" | "MEDIUM" | "HIGH"
-
-  @IsOptional()
-  @IsNumber()
-  departmentAverage?: number
+  @IsEnum(['LOW', 'MEDIUM', 'HIGH'])
+  caseComplexity?: 'LOW' | 'MEDIUM' | 'HIGH';
 
   @IsOptional()
   @IsNumber()
-  benchmarkValue?: number
+  departmentAverage?: number;
 
   @IsOptional()
   @IsNumber()
-  improvementTarget?: number
+  benchmarkValue?: number;
+
+  @IsOptional()
+  @IsNumber()
+  improvementTarget?: number;
 }
 
 export class CreatePerformanceMetricDto {
   @IsUUID()
-  doctorId: string
+  doctorId: string;
 
   @IsEnum(MetricType)
-  metricType: MetricType
+  metricType: MetricType;
 
   @IsNumber()
-  value: number
+  value: number;
 
   @IsOptional()
   @IsString()
-  unit?: string
+  unit?: string;
 
   @IsDate()
   @Type(() => Date)
-  recordedDate: Date
+  recordedDate: Date;
 
   @IsString()
-  recordedBy: string
+  recordedBy: string;
 
   @IsOptional()
   @IsString()
-  period?: string
+  period?: string;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => AdditionalDataDto)
-  additionalData?: AdditionalDataDto
+  additionalData?: AdditionalDataDto;
 
   @IsOptional()
   @IsString()
-  notes?: string
+  notes?: string;
 }

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DosageForm, DrugSchedule, Drug } from '../entities/drug.entity';
@@ -36,7 +40,7 @@ export class DrugService {
     }
 
     const existingDrug = await this.drugRepository.findOne({
-      where: { ndcCode: createDrugDto.ndcCode }
+      where: { ndcCode: createDrugDto.ndcCode },
     });
 
     if (existingDrug) {
@@ -50,14 +54,14 @@ export class DrugService {
   async findAll(): Promise<Drug[]> {
     return await this.drugRepository.find({
       where: { isActive: true },
-      relations: ['inventoryItems']
+      relations: ['inventoryItems'],
     });
   }
 
   async findByNdc(ndcCode: string): Promise<Drug> {
     const drug = await this.drugRepository.findOne({
       where: { ndcCode, isActive: true },
-      relations: ['inventoryItems']
+      relations: ['inventoryItems'],
     });
 
     if (!drug) {
@@ -70,7 +74,7 @@ export class DrugService {
   async findById(id: string): Promise<Drug> {
     const drug = await this.drugRepository.findOne({
       where: { id, isActive: true },
-      relations: ['inventoryItems']
+      relations: ['inventoryItems'],
     });
 
     if (!drug) {
@@ -90,14 +94,16 @@ export class DrugService {
         const drug2 = drugs[j];
 
         // Check if drug1 has interactions with drug2's active ingredients
-        const hasInteraction = drug1.interactions.some(interaction =>
-          drug2.activeIngredients.some(ingredient =>
-            interaction.toLowerCase().includes(ingredient.toLowerCase())
-          )
+        const hasInteraction = drug1.interactions.some((interaction) =>
+          drug2.activeIngredients.some((ingredient) =>
+            interaction.toLowerCase().includes(ingredient.toLowerCase()),
+          ),
         );
 
         if (hasInteraction) {
-          interactions.push(`${drug1.brandName} may interact with ${drug2.brandName}`);
+          interactions.push(
+            `${drug1.brandName} may interact with ${drug2.brandName}`,
+          );
         }
       }
     }
@@ -111,7 +117,7 @@ export class DrugService {
       .where('drug.isActive = :isActive', { isActive: true })
       .andWhere(
         '(LOWER(drug.brandName) LIKE LOWER(:query) OR LOWER(drug.genericName) LIKE LOWER(:query) OR drug.ndcCode LIKE :query)',
-        { query: `%${query}%` }
+        { query: `%${query}%` },
       )
       .getMany();
   }

@@ -3,7 +3,6 @@
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('observations')
 export class ObservationsController {
-  
   @Post()
   @Roles('doctor', 'nurse', 'lab-tech')
   @ApiOperation({
@@ -21,7 +20,7 @@ export class ObservationsController {
       - Automated range validation for common vital signs
       - Critical value alerts for abnormal results
       - Integration with clinical decision support systems
-    `
+    `,
   })
   @ApiResponse({
     status: 201,
@@ -36,14 +35,14 @@ export class ObservationsController {
         unit: 'kg',
         observationDateTime: '2024-06-01T10:30:00.000Z',
         status: 'final',
-        recordedBy: 'Dr. Smith'
-      }
-    }
+        recordedBy: 'Dr. Smith',
+      },
+    },
   })
   async createObservation(@Body() createObservationDto: CreateObservationDto) {
     return {
       message: 'Observation creation endpoint - Implementation required',
-      observationData: createObservationDto
+      observationData: createObservationDto,
     };
   }
 }

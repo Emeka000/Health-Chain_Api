@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, FindManyOptions } from 'typeorm';
 import { Staff } from '../entities/staff.entity';
@@ -15,27 +19,38 @@ export class StaffService {
     const existingStaff = await this.staffRepository.findOne({
       where: [
         { employeeId: createStaffDto.employeeId },
-        { email: createStaffDto.email }
-      ]
+        { email: createStaffDto.email },
+      ],
     });
 
     if (existingStaff) {
-      throw new BadRequestException('Staff with this employee ID or email already exists');
+      throw new BadRequestException(
+        'Staff with this employee ID or email already exists',
+      );
     }
 
     const staff = this.staffRepository.create(createStaffDto);
     return await this.staffRepository.save(staff);
   }
 
-  async findAll(query: FilterQuery): Promise<{ data: Staff[]; pagination: any }> {
-    const { page = 1, limit = 10, sortBy = 'createdAt', sortOrder = 'DESC', search, status } = query;
+  async findAll(
+    query: FilterQuery,
+  ): Promise<{ data: Staff[]; pagination: any }> {
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = 'DESC',
+      search,
+      status,
+    } = query;
 
     const whereConditions: any = {};
-    
+
     if (search) {
       whereConditions.firstName = Like(`%${search}%`);
     }
-    
+
     if (status) {
       whereConditions.status = status;
     }
@@ -80,7 +95,7 @@ export class StaffService {
 
   async update(id: string, updateDto: any): Promise<Staff> {
     const staff = await this.findOne(id);
-    
+
     Object.assign(staff, updateDto);
     return await this.staffRepository.save(staff);
   }
@@ -92,7 +107,7 @@ export class StaffService {
 
   async createSchedule(staffId: string, scheduleDto: any): Promise<any> {
     const staff = await this.findOne(staffId);
-    
+
     // In a real implementation, this would create a schedule entity
     // For now, we'll return a mock schedule
     return {
@@ -105,7 +120,7 @@ export class StaffService {
 
   async getSchedule(staffId: string, query: any): Promise<any> {
     const staff = await this.findOne(staffId);
-    
+
     // In a real implementation, this would fetch from a schedule entity
     return {
       staffId: staff.id,

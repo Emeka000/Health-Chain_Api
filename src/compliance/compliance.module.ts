@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ScheduleModule } from '@nestjs/schedule';
-import { 
+import {
   Regulation,
   ComplianceRequirement,
   ComplianceAssessment,
@@ -46,11 +46,7 @@ import {
     ]),
     ScheduleModule.forRoot(),
   ],
-  controllers: [
-    ComplianceController,
-    TrainingController,
-    PolicyController,
-  ],
+  controllers: [ComplianceController, TrainingController, PolicyController],
   providers: [
     ComplianceService,
     HipaaService,
@@ -58,11 +54,6 @@ import {
     NotificationService,
     TrainingService,
   ],
-  exports: [
-    ComplianceService,
-    HipaaService,
-    AuditService,
-    TrainingService,
-  ],
+  exports: [ComplianceService, HipaaService, AuditService, TrainingService],
 })
 export class ComplianceModule {}

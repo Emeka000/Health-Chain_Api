@@ -16,13 +16,13 @@ export class HealthController {
         status: lastBackup?.success ? 'healthy' : 'critical',
         lastBackup: lastBackup?.timestamp,
         verified: lastBackup?.verified,
-        message: lastBackup?.message || 'Backup system operational'
+        message: lastBackup?.message || 'Backup system operational',
       };
     } catch (error) {
       return {
         status: 'critical',
         error: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }

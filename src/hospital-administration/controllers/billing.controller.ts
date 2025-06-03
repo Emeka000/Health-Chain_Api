@@ -1,7 +1,20 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Put,
+  Delete,
+  Body,
+  Param,
+  Query,
+  HttpStatus,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { BillingService } from '../services/billing.service';
-import { FilterQuery, ApiResponse as CustomApiResponse } from '../interfaces/common.interface';
+import {
+  FilterQuery,
+  ApiResponse as CustomApiResponse,
+} from '../interfaces/common.interface';
 
 @ApiTags('Billing Management')
 @Controller('api/billing')
@@ -11,13 +24,18 @@ export class BillingController {
   // Bill Management
   @Post('bills')
   @ApiOperation({ summary: 'Create new bill' })
-  @ApiResponse({ status: HttpStatus.CREATED, description: 'Bill created successfully' })
-  async createBill(@Body() createBillDto: any): Promise<CustomApiResponse<any>> {
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Bill created successfully',
+  })
+  async createBill(
+    @Body() createBillDto: any,
+  ): Promise<CustomApiResponse<any>> {
     const bill = await this.billingService.createBill(createBillDto);
     return {
       success: true,
       data: bill,
-      message: 'Bill created successfully'
+      message: 'Bill created successfully',
     };
   }
 
@@ -27,12 +45,14 @@ export class BillingController {
   @ApiQuery({ name: 'status', required: false, type: String })
   @ApiQuery({ name: 'dateFrom', required: false, type: String })
   @ApiQuery({ name: 'dateTo', required: false, type: String })
-  async getAllBills(@Query() query: FilterQuery): Promise<CustomApiResponse<any[]>> {
+  async getAllBills(
+    @Query() query: FilterQuery,
+  ): Promise<CustomApiResponse<any[]>> {
     const result = await this.billingService.getAllBills(query);
     return {
       success: true,
       data: result.data,
-      pagination: result.pagination
+      pagination: result.pagination,
     };
   }
 
@@ -42,18 +62,21 @@ export class BillingController {
     const bill = await this.billingService.getBill(id);
     return {
       success: true,
-      data: bill
+      data: bill,
     };
   }
 
   @Put('bills/:id')
   @ApiOperation({ summary: 'Update bill' })
-  async updateBill(@Param('id') id: string, @Body() updateDto: any): Promise<CustomApiResponse<any>> {
+  async updateBill(
+    @Param('id') id: string,
+    @Body() updateDto: any,
+  ): Promise<CustomApiResponse<any>> {
     const bill = await this.billingService.updateBill(id, updateDto);
     return {
       success: true,
       data: bill,
-      message: 'Bill updated successfully'
+      message: 'Bill updated successfully',
     };
   }
 
@@ -64,7 +87,7 @@ export class BillingController {
     return {
       success: true,
       data: null,
-      message: 'Bill deleted successfully'
+      message: 'Bill deleted successfully',
     };
   }
 
@@ -75,30 +98,34 @@ export class BillingController {
     return {
       success: true,
       data: bill,
-      message: 'Bill finalized successfully'
+      message: 'Bill finalized successfully',
     };
   }
 
   // Payment Management
   @Post('payments')
   @ApiOperation({ summary: 'Process payment' })
-  async processPayment(@Body() paymentDto: any): Promise<CustomApiResponse<any>> {
+  async processPayment(
+    @Body() paymentDto: any,
+  ): Promise<CustomApiResponse<any>> {
     const payment = await this.billingService.processPayment(paymentDto);
     return {
       success: true,
       data: payment,
-      message: 'Payment processed successfully'
+      message: 'Payment processed successfully',
     };
   }
 
   @Get('payments')
   @ApiOperation({ summary: 'Get all payments' })
-  async getAllPayments(@Query() query: FilterQuery): Promise<CustomApiResponse<any[]>> {
+  async getAllPayments(
+    @Query() query: FilterQuery,
+  ): Promise<CustomApiResponse<any[]>> {
     const result = await this.billingService.getAllPayments(query);
     return {
       success: true,
       data: result.data,
-      pagination: result.pagination
+      pagination: result.pagination,
     };
   }
 
@@ -108,18 +135,21 @@ export class BillingController {
     const payment = await this.billingService.getPayment(id);
     return {
       success: true,
-      data: payment
+      data: payment,
     };
   }
 
   @Post('payments/:id/refund')
   @ApiOperation({ summary: 'Process payment refund' })
-  async refundPayment(@Param('id') id: string, @Body() refundDto: any): Promise<CustomApiResponse<any>> {
+  async refundPayment(
+    @Param('id') id: string,
+    @Body() refundDto: any,
+  ): Promise<CustomApiResponse<any>> {
     const refund = await this.billingService.refundPayment(id, refundDto);
     return {
       success: true,
       data: refund,
-      message: 'Refund processed successfully'
+      message: 'Refund processed successfully',
     };
   }
 
@@ -130,27 +160,31 @@ export class BillingController {
     const report = await this.billingService.getRevenueReport(query);
     return {
       success: true,
-      data: report
+      data: report,
     };
   }
 
   @Get('reports/outstanding')
   @ApiOperation({ summary: 'Get outstanding bills report' })
-  async getOutstandingReport(@Query() query: any): Promise<CustomApiResponse<any>> {
+  async getOutstandingReport(
+    @Query() query: any,
+  ): Promise<CustomApiResponse<any>> {
     const report = await this.billingService.getOutstandingReport(query);
     return {
       success: true,
-      data: report
+      data: report,
     };
   }
 
   @Get('reports/payment-methods')
   @ApiOperation({ summary: 'Get payment methods report' })
-  async getPaymentMethodsReport(@Query() query: any): Promise<CustomApiResponse<any>> {
+  async getPaymentMethodsReport(
+    @Query() query: any,
+  ): Promise<CustomApiResponse<any>> {
     const report = await this.billingService.getPaymentMethodsReport(query);
     return {
       success: true,
-      data: report
+      data: report,
     };
   }
 }

@@ -2,7 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { PolicyProcedure, PolicyStatus } from '../entities/policy-procedure.entity';
+import {
+  PolicyProcedure,
+  PolicyStatus,
+} from '../entities/policy-procedure.entity';
 import { NotificationService } from './notification.service';
 
 @Injectable()
@@ -32,9 +35,13 @@ export class PolicyService {
     for (const policy of policiesDueForReview) {
       // Send notification for policies due for review
       // Implementation would be similar to other notifications
-      this.logger.log(`Policy ${policy.number} due for review on ${policy.nextReviewDate}`);
+      this.logger.log(
+        `Policy ${policy.number} due for review on ${policy.nextReviewDate}`,
+      );
     }
 
-    this.logger.log(`Found ${policiesDueForReview.length} policies due for review`);
+    this.logger.log(
+      `Found ${policiesDueForReview.length} policies due for review`,
+    );
   }
 }

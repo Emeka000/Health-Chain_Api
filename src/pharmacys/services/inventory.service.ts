@@ -34,9 +34,11 @@ export class InventoryService {
     private safetyAlertService: SafetyAlertService,
   ) {}
 
-  async addInventoryItem(createInventoryDto: CreateInventoryItemDto): Promise<InventoryItem> {
+  async addInventoryItem(
+    createInventoryDto: CreateInventoryItemDto,
+  ): Promise<InventoryItem> {
     const drug = await this.drugRepository.findOne({
-      where: { id: createInventoryDto.drugId }
+      where: { id: createInventoryDto.drugId },
     });
 
     if (!drug) {
@@ -47,10 +49,13 @@ export class InventoryService {
     return await this.inventoryRepository.save(inventoryItem);
   }
 
-  async updateInventory(id: string, updateDto: UpdateInventoryDto): Promise<InventoryItem> {
+  async updateInventory(
+    id: string,
+    updateDto: UpdateInventoryDto,
+  ): Promise<InventoryItem> {
     const item = await this.inventoryRepository.findOne({
       where: { id },
-      relations: ['drug']
+      relations: ['drug'],
     });
 
     if (!item) {
@@ -72,7 +77,7 @@ export class InventoryService {
     return await this.inventoryRepository.find({
       where: { drugId, isActive: true },
       relations: ['drug'],
-      order: { expirationDate: 'ASC' }
+      order: { expirationDate: 'ASC' },
     });
   }
 
@@ -80,7 +85,7 @@ export class InventoryService {
     return await this.inventoryRepository.find({
       where: { isActive: true },
       relations: ['drug'],
-      order: { createdAt: 'DESC' }
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -100,10 +105,10 @@ export class InventoryService {
     return await this.inventoryRepository.find({
       where: {
         expirationDate: LessThanOrEqual(expirationDate),
-        isActive: true
+        isActive: true,
       },
       relations: ['drug'],
-      order: { expirationDate: 'ASC' }
+      order: { expirationDate: 'ASC' },
     });
   }
 

@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToMany,
+} from 'typeorm';
 import { Department } from './department.entity';
 import { Staff } from './staff.entity';
 import { Bed } from './bed.entity';
@@ -32,19 +39,23 @@ export class Hospital {
   @Column({ name: 'total_beds' })
   totalBeds: number;
 
-  @Column({ type: 'enum', enum: ['active', 'inactive', 'maintenance'], default: 'active' })
+  @Column({
+    type: 'enum',
+    enum: ['active', 'inactive', 'maintenance'],
+    default: 'active',
+  })
   status: string;
 
   @Column('json', { nullable: true })
   settings: Record<string, any>;
 
-  @OneToMany(() => Department, department => department.hospital)
+  @OneToMany(() => Department, (department) => department.hospital)
   departments: Department[];
 
-  @OneToMany(() => Staff, staff => staff.hospital)
+  @OneToMany(() => Staff, (staff) => staff.hospital)
   staff: Staff[];
 
-  @OneToMany(() => Bed, bed => bed.hospital)
+  @OneToMany(() => Bed, (bed) => bed.hospital)
   beds: Bed[];
 
   @CreateDateColumn({ name: 'created_at' })

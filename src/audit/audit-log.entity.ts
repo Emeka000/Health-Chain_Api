@@ -104,4 +104,4 @@ export class AuditLog {
 
   @Column({ type: 'bigint', default: () => 'EXTRACT(EPOCH FROM NOW())' })
   timestamp: number;
-} 
+}

@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+} from 'typeorm';
 import { Drug } from './drug.entity';
 
 export enum TransactionType {
@@ -6,7 +12,7 @@ export enum TransactionType {
   DISPENSED = 'DISPENSED',
   RETURNED = 'RETURNED',
   DESTROYED = 'DESTROYED',
-  TRANSFERRED = 'TRANSFERRED'
+  TRANSFERRED = 'TRANSFERRED',
 }
 
 @Entity('controlled_substance_logs')
@@ -14,7 +20,7 @@ export class ControlledSubstanceLog {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Drug, drug => drug.inventoryItems)
+  @ManyToOne(() => Drug, (drug) => drug.inventoryItems)
   drug: Drug;
 
   @Column()

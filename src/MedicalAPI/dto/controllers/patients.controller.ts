@@ -1,5 +1,20 @@
-import { Controller, Get, Post, Body, Param, UseGuards, ParseUUIDPipe } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags, ApiOperation, ApiResponse, ApiParam, ApiSecurity } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  ParseUUIDPipe,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiSecurity,
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
@@ -11,7 +26,6 @@ import { CreatePatientDto } from '../dto/patient.dto';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('patients')
 export class PatientsController {
-  
   @Post()
   @Roles('doctor', 'nurse', 'admin')
   @ApiOperation({
@@ -40,9 +54,9 @@ export class PatientsController {
         gender: 'male',
         medicalRecordNumber: 'MRN-2024-001234',
         createdAt: '2024-06-01T10:00:00.000Z',
-        updatedAt: '2024-06-01T10:00:00.000Z'
-      }
-    }
+        updatedAt: '2024-06-01T10:00:00.000Z',
+      },
+    },
   })
   @ApiResponse({
     status: 400,
@@ -51,23 +65,23 @@ export class PatientsController {
       example: {
         statusCode: 400,
         message: ['firstName must be longer than 1 character'],
-        error: 'Bad Request'
-      }
-    }
+        error: 'Bad Request',
+      },
+    },
   })
   @ApiResponse({
     status: 401,
-    description: 'Unauthorized - Invalid or missing authentication token'
+    description: 'Unauthorized - Invalid or missing authentication token',
   })
   @ApiResponse({
     status: 403,
-    description: 'Forbidden - Insufficient role permissions for PHI access'
+    description: 'Forbidden - Insufficient role permissions for PHI access',
   })
   async createPatient(@Body() createPatientDto: CreatePatientDto) {
     // Implementation would go here
     return {
       message: 'Patient creation endpoint - Implementation required',
-      receivedData: createPatientDto
+      receivedData: createPatientDto,
     };
   }
 
@@ -87,14 +101,14 @@ export class PatientsController {
       - Doctor: Full medical record access
       - Nurse: Clinical data access
       - Receptionist: Limited demographic data only
-    `
+    `,
   })
   @ApiParam({
     name: 'id',
     description: 'Patient UUID',
     example: '550e8400-e29b-41d4-a716-446655440000',
     type: String,
-    format: 'uuid'
+    format: 'uuid',
   })
   @ApiResponse({
     status: 200,
@@ -107,18 +121,18 @@ export class PatientsController {
         age: 44, // Calculated from DOB, DOB not exposed
         gender: 'male',
         medicalRecordNumber: 'MRN-2024-001234',
-        lastVisit: '2024-05-15T14:30:00.000Z'
-      }
-    }
+        lastVisit: '2024-05-15T14:30:00.000Z',
+      },
+    },
   })
   @ApiResponse({
     status: 404,
-    description: 'Patient not found'
+    description: 'Patient not found',
   })
   async getPatient(@Param('id', ParseUUIDPipe) id: string) {
     return {
       message: 'Patient retrieval endpoint - Implementation required',
-      patientId: id
+      patientId: id,
     };
   }
 }

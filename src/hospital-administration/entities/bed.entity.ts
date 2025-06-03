@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Hospital } from './hospital.entity';
 import { Department } from './department.entity';
 import { BedAllocation } from './bed-allocation.entity';
@@ -10,14 +19,14 @@ export enum BedType {
   EMERGENCY = 'emergency',
   MATERNITY = 'maternity',
   PEDIATRIC = 'pediatric',
-  SURGICAL = 'surgical'
+  SURGICAL = 'surgical',
 }
 
 export enum BedStatus {
   AVAILABLE = 'available',
   OCCUPIED = 'occupied',
   MAINTENANCE = 'maintenance',
-  RESERVED = 'reserved'
+  RESERVED = 'reserved',
 }
 
 @Entity('beds')
@@ -52,21 +61,21 @@ export class Bed {
   @Column({ name: 'hospital_id' })
   hospitalId: string;
 
-  @ManyToOne(() => Room, room => room.beds)
+  @ManyToOne(() => Room, (room) => room.beds)
   room: Room;
 
   @Column({ name: 'department_id' })
   departmentId: string;
 
-  @ManyToOne(() => Hospital, hospital => hospital.beds)
+  @ManyToOne(() => Hospital, (hospital) => hospital.beds)
   @JoinColumn({ name: 'hospital_id' })
   hospital: Hospital;
 
-  @ManyToOne(() => Department, department => department.beds)
+  @ManyToOne(() => Department, (department) => department.beds)
   @JoinColumn({ name: 'department_id' })
   department: Department;
 
-  @OneToMany(() => BedAllocation, allocation => allocation.bed)
+  @OneToMany(() => BedAllocation, (allocation) => allocation.bed)
   allocations: BedAllocation[];
 
   @CreateDateColumn({ name: 'created_at' })

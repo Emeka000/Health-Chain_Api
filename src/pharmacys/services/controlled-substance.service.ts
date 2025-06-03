@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between } from 'typeorm';
-import { ControlledSubstanceLog, TransactionType } from '../entities/controlled-substance-log.entity';
+import {
+  ControlledSubstanceLog,
+  TransactionType,
+} from '../entities/controlled-substance-log.entity';
 import { Drug } from '../entities/drug.entity';
-
 
 @Injectable()
 export class ControlledSubstanceService {
@@ -20,10 +22,10 @@ export class ControlledSubstanceService {
     prescriptionId: string,
     patientId: string,
     pharmacistId: string,
-    deaNumber?: string
+    deaNumber?: string,
   ): Promise<ControlledSubstanceLog> {
     const currentBalance = await this.getCurrentBalance(drugId);
-    
+
     const log = this.logRepository.create({
       drugId,
       transactionType: TransactionType.DISPENSED,
@@ -32,7 +34,7 @@ export class ControlledSubstanceService {
       prescriptionId,
       patientId,
       pharmacistId,
-      deaNumber
+      deaNumber,
     });
 
     return await this.logRepository.save(log);
@@ -42,17 +44,17 @@ export class ControlledSubstanceService {
     drugId: string,
     quantity: number,
     pharmacistId: string,
-    notes?: string
+    notes?: string,
   ): Promise<ControlledSubstanceLog> {
     const currentBalance = await this.getCurrentBalance(drugId);
-    
+
     const log = this.logRepository.create({
       drugId,
       transactionType: TransactionType.RECEIVED,
       quantity,
       runningBalance: currentBalance + quantity,
       pharmacistId,
-      notes
+      notes,
     });
 
     return await this.logRepository.save(log);
@@ -62,17 +64,17 @@ export class ControlledSubstanceService {
     drugId: string,
     quantity: number,
     pharmacistId: string,
-    notes: string
+    notes: string,
   ): Promise<ControlledSubstanceLog> {
     const currentBalance = await this.getCurrentBalance(drugId);
-    
+
     const log = this.logRepository.create({
       drugId,
       transactionType: TransactionType.DESTROYED,
       quantity,
       runningBalance: currentBalance - quantity,
       pharmacistId,
-      notes
+      notes,
     });
 
     return await this.logRepository.save(log);
@@ -81,7 +83,7 @@ export class ControlledSubstanceService {
   async getCurrentBalance(drugId: string): Promise<number> {
     const latestLog = await this.logRepository.findOne({
       where: { drugId },
-      order: { transactionDate: 'DESC' }
+      order: { transactionDate: 'DESC' },
     });
 
     return latestLog ? latestLog.runningBalance : 0;
@@ -90,42 +92,41 @@ export class ControlledSubstanceService {
   async getTransactionHistory(
     drugId: string,
     startDate?: Date,
-    endDate?: Date
+    endDate?: Date,
   ): Promise<ControlledSubstanceLog[]> {
-    const query = this.logRepository.createQueryBuilder('log')
+    const query = this.logRepository
+      .createQueryBuilder('log')
       .leftJoinAndSelect('log.drug', 'drug')
       .where('log.drugId = :drugId', { drugId });
 
     if (startDate && endDate) {
       query.andWhere('log.transactionDate BETWEEN :startDate AND :endDate', {
         startDate,
-        endDate
+        endDate,
       });
     }
 
-    return await query
-      .orderBy('log.transactionDate', 'DESC')
-      .getMany();
+    return await query.orderBy('log.transactionDate', 'DESC').getMany();
   }
 
   async generateReport(startDate: Date, endDate: Date): Promise<any> {
     const logs = await this.logRepository.find({
       where: {
-        transactionDate: Between(startDate, endDate)
+        transactionDate: Between(startDate, endDate),
       },
       relations: ['drug'],
-      order: { transactionDate: 'ASC' }
+      order: { transactionDate: 'ASC' },
     });
 
     const report = {
       reportPeriod: { startDate, endDate },
       totalTransactions: logs.length,
       transactionsByType: {},
-      drugSummary: {}
+      drugSummary: {},
     };
 
     // Group by transaction type
-    logs.forEach(log => {
+    logs.forEach((log) => {
       if (!report.transactionsByType[log.transactionType]) {
         report.transactionsByType[log.transactionType] = 0;
       }
@@ -138,7 +139,7 @@ export class ControlledSubstanceService {
           schedule: log.drug.schedule,
           transactions: [],
           totalDispensed: 0,
-          totalReceived: 0
+          totalReceived: 0,
         };
       }
 
@@ -147,7 +148,7 @@ export class ControlledSubstanceService {
         type: log.transactionType,
         quantity: log.quantity,
         balance: log.runningBalance,
-        prescriptionId: log.prescriptionId
+        prescriptionId: log.prescriptionId,
       });
 
       if (log.transactionType === TransactionType.DISPENSED) {

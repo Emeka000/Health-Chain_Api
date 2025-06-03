@@ -1,7 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { SecurityIncident, IncidentSeverity, IncidentStatus } from '../entities/security-incident.entity';
+import {
+  SecurityIncident,
+  IncidentSeverity,
+  IncidentStatus,
+} from '../entities/security-incident.entity';
 import { BreachNotificationService } from './breach-notification.service';
 
 interface CreateIncidentData {
@@ -32,7 +36,9 @@ export class SecurityIncidentService {
 
     if (data.breachOccurred) {
       // HIPAA requires breach notification within 60 days
-      incident.breachNotificationDeadline = new Date(Date.now() + 60 * 24 * 60 * 60 * 1000);
+      incident.breachNotificationDeadline = new Date(
+        Date.now() + 60 * 24 * 60 * 60 * 1000,
+      );
     }
 
     const savedIncident = await this.incidentRepository.save(incident);
@@ -44,13 +50,19 @@ export class SecurityIncidentService {
 
     // Handle breach notification if required
     if (data.breachOccurred) {
-      await this.breachNotificationService.initiateBreachNotification(savedIncident);
+      await this.breachNotificationService.initiateBreachNotification(
+        savedIncident,
+      );
     }
 
     return savedIncident;
   }
 
-  async updateIncidentStatus(incidentId: string, status: IncidentStatus, notes?: string): Promise<void> {
+  async updateIncidentStatus(
+    incidentId: string,
+    status: IncidentStatus,
+    notes?: string,
+  ): Promise<void> {
     await this.incidentRepository.update(incidentId, {
       status,
       resolutionNotes: notes,
@@ -85,6 +97,8 @@ export class SecurityIncidentService {
     });
 
     // Send immediate alerts (integrate with your notification system)
-    console.error(`CRITICAL SECURITY INCIDENT: ${incidentId} - Immediate attention required`);
+    console.error(
+      `CRITICAL SECURITY INCIDENT: ${incidentId} - Immediate attention required`,
+    );
   }
 }

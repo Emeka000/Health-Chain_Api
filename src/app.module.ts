@@ -23,23 +23,31 @@ import { EmergencyModule } from './emergency/emergency.module';
 import helmet from 'helmet';
 import * as compression from 'compression';
 
-import { EventEmitterModule } from "@nestjs/event-emitter"
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
-import { DatabaseConfig } from "./config/database.config"
-import { AuthModule } from "./modules/auth/auth.module"
-import { NursesModule } from "./modules/nurses/nurses.module"
-import { ShiftsModule } from "./modules/shifts/shifts.module"
-import { AssignmentsModule } from "./modules/assignments/assignments.module"
-import { StaffModule } from "./modules/staff/staff.module"
-import { DocumentationModule } from "./modules/documentation/documentation.module"
-import { QualityMetricsModule } from "./modules/quality-metrics/quality-metrics.module"
-import { PatientsModule } from "./modules/patients/patients.module"
-import { DepartmentsModule } from "./modules/departments/departments.module"
-import { AuditModule } from "./modules/audit/audit.module"
+import { DatabaseConfig } from './config/database.config';
+import { AuthModule } from './modules/auth/auth.module';
+import { NursesModule } from './modules/nurses/nurses.module';
+import { ShiftsModule } from './modules/shifts/shifts.module';
+import { AssignmentsModule } from './modules/assignments/assignments.module';
+import { StaffModule } from './modules/staff/staff.module';
+import { DocumentationModule } from './modules/documentation/documentation.module';
+import { QualityMetricsModule } from './modules/quality-metrics/quality-metrics.module';
+import { PatientsModule } from './modules/patients/patients.module';
+import { DepartmentsModule } from './modules/departments/departments.module';
+import { AuditModule } from './modules/audit/audit.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { VendorModule } from './vendor/vendor.module';
+import { RecallModule } from './recall/recall.module';
+import { WasteModule } from './waste/waste.module';
+import { Drug } from './pharmacy/entities/drug.entity';
+import { Vendor } from './vendor/entities/vendor.entity';
+import { Recall } from './recall/entities/recall.entity';
 
 @Module({
   imports: [
     // Global configuration
+    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
@@ -83,18 +91,22 @@ import { AuditModule } from "./modules/audit/audit.module"
     ScheduleModule.forRoot(),
 
     // Audit log repository
-    TypeOrmModule.forFeature([AuditLog], 'audit'),
+    TypeOrmModule.forFeature([AuditLog, Drug, Vendor, Recall], 'audit'),
 
     // Application modules
     BillingModule,
     MedicalStaffModule,
-feat/pharmacy-lab-management-apis-39
+    feat / pharmacy - lab - management - apis - 39,
     PharmacyModule,
     DataQualityModule,
     LabModule,
     PharmacysModule,
     MarModule,
     EmergencyModule,
+    InventoryModule,
+    VendorModule,
+    RecallModule,
+    WasteModule,
   ],
   controllers: [AppController],
   providers: [AppService, EncryptionService, AuditService],
@@ -133,7 +145,7 @@ export class AppModule implements NestModule {
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: ".env",
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
       useClass: DatabaseConfig,

@@ -1,14 +1,47 @@
 // src/compliance/services/compliance.service.ts
-import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, LessThan, MoreThan, In, DataSource } from 'typeorm';
+import {
+  Repository,
+  Between,
+  LessThan,
+  MoreThan,
+  In,
+  DataSource,
+} from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { Regulation, RegulationType, RegulationStatus } from '../entities/regulation.entity';
-import { ComplianceRequirement, RiskLevel } from '../entities/compliance-requirement.entity';
-import { ComplianceAssessment, AssessmentStatus, ComplianceScore } from '../entities/compliance-assessment.entity';
-import { Finding, FindingStatus, FindingSeverity } from '../entities/finding.entity';
-import { CorrectiveAction, ActionStatus } from '../entities/corrective-action.entity';
-import { PolicyProcedure, PolicyStatus } from '../entities/policy-procedure.entity';
+import {
+  Regulation,
+  RegulationType,
+  RegulationStatus,
+} from '../entities/regulation.entity';
+import {
+  ComplianceRequirement,
+  RiskLevel,
+} from '../entities/compliance-requirement.entity';
+import {
+  ComplianceAssessment,
+  AssessmentStatus,
+  ComplianceScore,
+} from '../entities/compliance-assessment.entity';
+import {
+  Finding,
+  FindingStatus,
+  FindingSeverity,
+} from '../entities/finding.entity';
+import {
+  CorrectiveAction,
+  ActionStatus,
+} from '../entities/corrective-action.entity';
+import {
+  PolicyProcedure,
+  PolicyStatus,
+} from '../entities/policy-procedure.entity';
 import { CreateRegulationDto } from '../dto/create-regulation.dto';
 import { CreateComplianceRequirementDto } from '../dto/create-compliance-requirement.dto';
 import { CreateComplianceAssessmentDto } from '../dto/create-compliance-assessment.dto';
@@ -40,7 +73,10 @@ export class ComplianceService {
 
   // ==================== REGULATION MANAGEMENT ====================
 
-  async createRegulation(createRegulationDto: CreateRegulationDto, createdBy: number): Promise<Regulation> {
+  async createRegulation(
+    createRegulationDto: CreateRegulationDto,
+    createdBy: number,
+  ): Promise<Regulation> {
     this.logger.log(`Creating regulation: ${createRegulationDto.code}`);
 
     const existingRegulation = await this.regulationRepository.findOne({
@@ -48,13 +84,17 @@ export class ComplianceService {
     });
 
     if (existingRegulation) {
-      throw new BadRequestException(`Regulation with code ${createRegulationDto.code} already exists`);
+      throw new BadRequestException(
+        `Regulation with code ${createRegulationDto.code} already exists`,
+      );
     }
 
     const regulation = this.regulationRepository.create({
       ...createRegulationDto,
       effectiveDate: new Date(createRegulationDto.effectiveDate),
-      expirationDate: createRegulationDto.expirationDate ? new Date(createRegulationDto.expirationDate) : null,
+      expirationDate: createRegulationDto.expirationDate
+        ? new Date(createRegulationDto.expirationDate)
+        : null,
       lastUpdatedBy: createdBy,
     });
 
@@ -73,22 +113,28 @@ export class ComplianceService {
   }
 
   async updateRegulation(
-    id: number, 
-    updateData: Partial<CreateRegulationDto>, 
-    updatedBy: number
+    id: number,
+    updateData: Partial<CreateRegulationDto>,
+    updatedBy: number,
   ): Promise<Regulation> {
-    const regulation = await this.regulationRepository.findOne({ where: { id } });
-    
+    const regulation = await this.regulationRepository.findOne({
+      where: { id },
+    });
+
     if (!regulation) {
       throw new NotFoundException('Regulation not found');
     }
 
     const oldData = { ...regulation };
-    
+
     Object.assign(regulation, {
       ...updateData,
-      effectiveDate: updateData.effectiveDate ? new Date(updateData.effectiveDate) : regulation.effectiveDate,
-      expirationDate: updateData.expirationDate ? new Date(updateData.expirationDate) : regulation.expirationDate,
+      effectiveDate: updateData.effectiveDate
+        ? new Date(updateData.effectiveDate)
+        : regulation.effectiveDate,
+      expirationDate: updateData.expirationDate
+        ? new Date(updateData.expirationDate)
+        : regulation.expirationDate,
       lastUpdatedBy: updatedBy,
     });
 
@@ -113,27 +159,32 @@ export class ComplianceService {
     effectiveBefore?: Date;
     effectiveAfter?: Date;
   }): Promise<Regulation[]> {
-    const queryBuilder = this.regulationRepository.createQueryBuilder('regulation');
+    const queryBuilder =
+      this.regulationRepository.createQueryBuilder('regulation');
 
     if (filters?.type) {
       queryBuilder.andWhere('regulation.type = :type', { type: filters.type });
     }
 
     if (filters?.status) {
-      queryBuilder.andWhere('regulation.status = :status', { status: filters.status });
+      queryBuilder.andWhere('regulation.status = :status', {
+        status: filters.status,
+      });
     }
 
     if (filters?.effectiveBefore) {
-      queryBuilder.andWhere('regulation.effectiveDate <= :before', { before: filters.effectiveBefore });
+      queryBuilder.andWhere('regulation.effectiveDate <= :before', {
+        before: filters.effectiveBefore,
+      });
     }
 
     if (filters?.effectiveAfter) {
-      queryBuilder.andWhere('regulation.effectiveDate >= :after', { after: filters.effectiveAfter });
+      queryBuilder.andWhere('regulation.effectiveDate >= :after', {
+        after: filters.effectiveAfter,
+      });
     }
 
-    return queryBuilder
-      .orderBy('regulation.effectiveDate', 'DESC')
-      .getMany();
+    return queryBuilder.orderBy('regulation.effectiveDate', 'DESC').getMany();
   }
 
   async getRegulationById(id: number): Promise<Regulation> {
@@ -155,7 +206,9 @@ export class ComplianceService {
     createRequirementDto: CreateComplianceRequirementDto,
     createdBy: number,
   ): Promise<ComplianceRequirement> {
-    this.logger.log(`Creating compliance requirement: ${createRequirementDto.code}`);
+    this.logger.log(
+      `Creating compliance requirement: ${createRequirementDto.code}`,
+    );
 
     const regulation = await this.regulationRepository.findOne({
       where: { id: createRequirementDto.regulationId },
@@ -170,11 +223,16 @@ export class ComplianceService {
     });
 
     if (existingRequirement) {
-      throw new BadRequestException(`Requirement with code ${createRequirementDto.code} already exists`);
+      throw new BadRequestException(
+        `Requirement with code ${createRequirementDto.code} already exists`,
+      );
     }
 
     const nextAssessmentDue = new Date();
-    nextAssessmentDue.setDate(nextAssessmentDue.getDate() + createRequirementDto.assessmentFrequencyDays);
+    nextAssessmentDue.setDate(
+      nextAssessmentDue.getDate() +
+        createRequirementDto.assessmentFrequencyDays,
+    );
 
     const requirement = this.requirementRepository.create({
       ...createRequirementDto,
@@ -247,26 +305,26 @@ export class ComplianceService {
       .leftJoinAndSelect('requirement.regulation', 'regulation');
 
     if (filters?.regulationId) {
-      queryBuilder.andWhere('requirement.regulationId = :regulationId', { 
-        regulationId: filters.regulationId 
+      queryBuilder.andWhere('requirement.regulationId = :regulationId', {
+        regulationId: filters.regulationId,
       });
     }
 
     if (filters?.riskLevel) {
-      queryBuilder.andWhere('requirement.riskLevel = :riskLevel', { 
-        riskLevel: filters.riskLevel 
+      queryBuilder.andWhere('requirement.riskLevel = :riskLevel', {
+        riskLevel: filters.riskLevel,
       });
     }
 
     if (filters?.active !== undefined) {
-      queryBuilder.andWhere('requirement.active = :active', { 
-        active: filters.active 
+      queryBuilder.andWhere('requirement.active = :active', {
+        active: filters.active,
       });
     }
 
     if (filters?.dueBefore) {
-      queryBuilder.andWhere('requirement.nextAssessmentDue <= :dueBefore', { 
-        dueBefore: filters.dueBefore 
+      queryBuilder.andWhere('requirement.nextAssessmentDue <= :dueBefore', {
+        dueBefore: filters.dueBefore,
       });
     }
 
@@ -281,7 +339,9 @@ export class ComplianceService {
   async createComplianceAssessment(
     createAssessmentDto: CreateComplianceAssessmentDto,
   ): Promise<ComplianceAssessment> {
-    this.logger.log(`Creating compliance assessment for requirement: ${createAssessmentDto.requirementId}`);
+    this.logger.log(
+      `Creating compliance assessment for requirement: ${createAssessmentDto.requirementId}`,
+    );
 
     const requirement = await this.requirementRepository.findOne({
       where: { id: createAssessmentDto.requirementId },
@@ -296,8 +356,8 @@ export class ComplianceService {
       ...createAssessmentDto,
       assessmentDate: new Date(createAssessmentDto.assessmentDate),
       dueDate: new Date(createAssessmentDto.dueDate),
-      remediationDeadline: createAssessmentDto.remediationDeadline 
-        ? new Date(createAssessmentDto.remediationDeadline) 
+      remediationDeadline: createAssessmentDto.remediationDeadline
+        ? new Date(createAssessmentDto.remediationDeadline)
         : null,
     });
 
@@ -347,8 +407,9 @@ export class ComplianceService {
     assessment.status = AssessmentStatus.COMPLETED;
 
     // Determine if remediation is required
-    assessment.remediationRequired = score === ComplianceScore.NON_COMPLIANT || 
-                                   score === ComplianceScore.PARTIALLY_COMPLIANT;
+    assessment.remediationRequired =
+      score === ComplianceScore.NON_COMPLIANT ||
+      score === ComplianceScore.PARTIALLY_COMPLIANT;
 
     if (assessment.remediationRequired && !assessment.remediationDeadline) {
       const deadline = new Date();
@@ -392,50 +453,54 @@ export class ComplianceService {
       .leftJoinAndSelect('requirement.regulation', 'regulation');
 
     if (filters?.requirementId) {
-      queryBuilder.andWhere('assessment.requirementId = :requirementId', { 
-        requirementId: filters.requirementId 
+      queryBuilder.andWhere('assessment.requirementId = :requirementId', {
+        requirementId: filters.requirementId,
       });
     }
 
     if (filters?.status) {
-      queryBuilder.andWhere('assessment.status = :status', { 
-        status: filters.status 
+      queryBuilder.andWhere('assessment.status = :status', {
+        status: filters.status,
       });
     }
 
     if (filters?.score) {
-      queryBuilder.andWhere('assessment.score = :score', { 
-        score: filters.score 
+      queryBuilder.andWhere('assessment.score = :score', {
+        score: filters.score,
       });
     }
 
     if (filters?.dueBefore) {
-      queryBuilder.andWhere('assessment.dueDate <= :dueBefore', { 
-        dueBefore: filters.dueBefore 
+      queryBuilder.andWhere('assessment.dueDate <= :dueBefore', {
+        dueBefore: filters.dueBefore,
       });
     }
 
     if (filters?.dueAfter) {
-      queryBuilder.andWhere('assessment.dueDate >= :dueAfter', { 
-        dueAfter: filters.dueAfter 
+      queryBuilder.andWhere('assessment.dueDate >= :dueAfter', {
+        dueAfter: filters.dueAfter,
       });
     }
 
-    return queryBuilder
-      .orderBy('assessment.dueDate', 'ASC')
-      .getMany();
+    return queryBuilder.orderBy('assessment.dueDate', 'ASC').getMany();
   }
 
   // ==================== FINDINGS MANAGEMENT ====================
 
-  async createFindingFromAssessment(assessment: ComplianceAssessment): Promise<Finding> {
+  async createFindingFromAssessment(
+    assessment: ComplianceAssessment,
+  ): Promise<Finding> {
     const finding = this.findingRepository.create({
       assessmentId: assessment.id,
       title: `Non-compliance identified in ${assessment.requirement?.code}`,
       description: `Assessment revealed non-compliance requiring immediate attention`,
-      severity: this.determineFindingSeverity(assessment.requirement?.riskLevel),
+      severity: this.determineFindingSeverity(
+        assessment.requirement?.riskLevel,
+      ),
       identifiedDate: new Date(),
-      dueDate: assessment.remediationDeadline || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      dueDate:
+        assessment.remediationDeadline ||
+        new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
       identifiedBy: assessment.reviewedBy || assessment.assessedBy,
       status: FindingStatus.OPEN,
     });
@@ -509,26 +574,26 @@ export class ComplianceService {
       .leftJoinAndSelect('finding.correctiveActions', 'actions');
 
     if (filters?.severity) {
-      queryBuilder.andWhere('finding.severity = :severity', { 
-        severity: filters.severity 
+      queryBuilder.andWhere('finding.severity = :severity', {
+        severity: filters.severity,
       });
     }
 
     if (filters?.status) {
-      queryBuilder.andWhere('finding.status = :status', { 
-        status: filters.status 
+      queryBuilder.andWhere('finding.status = :status', {
+        status: filters.status,
       });
     }
 
     if (filters?.assignedTo) {
-      queryBuilder.andWhere('finding.assignedTo = :assignedTo', { 
-        assignedTo: filters.assignedTo 
+      queryBuilder.andWhere('finding.assignedTo = :assignedTo', {
+        assignedTo: filters.assignedTo,
       });
     }
 
     if (filters?.dueBefore) {
-      queryBuilder.andWhere('finding.dueDate <= :dueBefore', { 
-        dueBefore: filters.dueBefore 
+      queryBuilder.andWhere('finding.dueDate <= :dueBefore', {
+        dueBefore: filters.dueBefore,
       });
     }
 
@@ -555,15 +620,20 @@ export class ComplianceService {
       this.requirementRepository.count({ where: { active: true } }),
       this.getLatestAssessmentsByScore(ComplianceScore.COMPLIANT),
       this.getLatestAssessmentsByScore(ComplianceScore.NON_COMPLIANT),
-      this.assessmentRepository.count({ where: { status: AssessmentStatus.SCHEDULED } }),
+      this.assessmentRepository.count({
+        where: { status: AssessmentStatus.SCHEDULED },
+      }),
       this.assessmentRepository.count({
         where: {
-          status: In([AssessmentStatus.SCHEDULED, AssessmentStatus.IN_PROGRESS]),
+          status: In([
+            AssessmentStatus.SCHEDULED,
+            AssessmentStatus.IN_PROGRESS,
+          ]),
           dueDate: LessThan(new Date()),
         },
       }),
-      this.findingRepository.count({ 
-        where: { status: In([FindingStatus.OPEN, FindingStatus.IN_PROGRESS]) } 
+      this.findingRepository.count({
+        where: { status: In([FindingStatus.OPEN, FindingStatus.IN_PROGRESS]) },
       }),
       this.findingRepository.count({
         where: {
@@ -576,9 +646,10 @@ export class ComplianceService {
     const compliantCount = compliantAssessments.length;
     const nonCompliantCount = nonCompliantAssessments.length;
     const assessedRequirements = compliantCount + nonCompliantCount;
-    const overallComplianceRate = assessedRequirements > 0 
-      ? (compliantCount / assessedRequirements) * 100 
-      : 0;
+    const overallComplianceRate =
+      assessedRequirements > 0
+        ? (compliantCount / assessedRequirements) * 100
+        : 0;
 
     return {
       overallComplianceRate: Math.round(overallComplianceRate * 100) / 100,
@@ -599,13 +670,16 @@ export class ComplianceService {
 
     const complianceData = await Promise.all(
       regulations.map(async (regulation) => {
-        const requirements = regulation.requirements.filter(req => req.active);
-        const latestAssessments = await this.getLatestAssessmentsForRequirements(
-          requirements.map(req => req.id),
+        const requirements = regulation.requirements.filter(
+          (req) => req.active,
         );
+        const latestAssessments =
+          await this.getLatestAssessmentsForRequirements(
+            requirements.map((req) => req.id),
+          );
 
         const compliant = latestAssessments.filter(
-          assessment => assessment.score === ComplianceScore.COMPLIANT,
+          (assessment) => assessment.score === ComplianceScore.COMPLIANT,
         ).length;
 
         const total = latestAssessments.length;
@@ -660,14 +734,18 @@ export class ComplianceService {
     const overdueAssessments = await this.getOverdueAssessments();
 
     for (const assessment of overdueAssessments) {
-      await this.notificationService.sendOverdueAssessmentNotification(assessment);
-      
+      await this.notificationService.sendOverdueAssessmentNotification(
+        assessment,
+      );
+
       // Update status to overdue
       assessment.status = AssessmentStatus.OVERDUE;
       await this.assessmentRepository.save(assessment);
     }
 
-    this.logger.log(`Processed ${overdueAssessments.length} overdue assessments`);
+    this.logger.log(
+      `Processed ${overdueAssessments.length} overdue assessments`,
+    );
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_7AM)
@@ -690,7 +768,10 @@ export class ComplianceService {
       const existingAssessment = await this.assessmentRepository.findOne({
         where: {
           requirementId: requirement.id,
-          status: In([AssessmentStatus.SCHEDULED, AssessmentStatus.IN_PROGRESS]),
+          status: In([
+            AssessmentStatus.SCHEDULED,
+            AssessmentStatus.IN_PROGRESS,
+          ]),
         },
       });
 
@@ -704,12 +785,17 @@ export class ComplianceService {
         });
 
         await this.assessmentRepository.save(assessment);
-        
-        await this.notificationService.sendUpcomingAssessmentNotification(assessment, requirement);
+
+        await this.notificationService.sendUpcomingAssessmentNotification(
+          assessment,
+          requirement,
+        );
       }
     }
 
-    this.logger.log(`Scheduled assessments for ${requirements.length} requirements`);
+    this.logger.log(
+      `Scheduled assessments for ${requirements.length} requirements`,
+    );
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_8AM)
@@ -729,12 +815,16 @@ export class ComplianceService {
       await this.notificationService.sendOverdueCriticalFindingAlert(finding);
     }
 
-    this.logger.log(`Processed ${criticalFindings.length} overdue critical findings`);
+    this.logger.log(
+      `Processed ${criticalFindings.length} overdue critical findings`,
+    );
   }
 
   // ==================== PRIVATE HELPER METHODS ====================
 
-  private async getLatestAssessmentsByScore(score: ComplianceScore): Promise<ComplianceAssessment[]> {
+  private async getLatestAssessmentsByScore(
+    score: ComplianceScore,
+  ): Promise<ComplianceAssessment[]> {
     const query = this.assessmentRepository
       .createQueryBuilder('assessment')
       .innerJoin(
@@ -742,19 +832,25 @@ export class ComplianceService {
           return subQuery
             .select('requirement_id, MAX(assessment_date) as latest_date')
             .from('compliance_assessments', 'sub_assessment')
-            .where('sub_assessment.status = :status', { status: AssessmentStatus.COMPLETED })
+            .where('sub_assessment.status = :status', {
+              status: AssessmentStatus.COMPLETED,
+            })
             .groupBy('requirement_id');
         },
         'latest',
         'assessment.requirement_id = latest.requirement_id AND assessment.assessment_date = latest.latest_date',
       )
       .where('assessment.score = :score', { score })
-      .andWhere('assessment.status = :status', { status: AssessmentStatus.COMPLETED });
+      .andWhere('assessment.status = :status', {
+        status: AssessmentStatus.COMPLETED,
+      });
 
     return query.getMany();
   }
 
-  private async getLatestAssessmentsForRequirements(requirementIds: number[]): Promise<ComplianceAssessment[]> {
+  private async getLatestAssessmentsForRequirements(
+    requirementIds: number[],
+  ): Promise<ComplianceAssessment[]> {
     if (requirementIds.length === 0) return [];
 
     const query = this.assessmentRepository
@@ -764,23 +860,33 @@ export class ComplianceService {
           return subQuery
             .select('requirement_id, MAX(assessment_date) as latest_date')
             .from('compliance_assessments', 'sub_assessment')
-            .where('sub_assessment.requirement_id IN (:...requirementIds)', { requirementIds })
-            .andWhere('sub_assessment.status = :status', { status: AssessmentStatus.COMPLETED })
+            .where('sub_assessment.requirement_id IN (:...requirementIds)', {
+              requirementIds,
+            })
+            .andWhere('sub_assessment.status = :status', {
+              status: AssessmentStatus.COMPLETED,
+            })
             .groupBy('requirement_id');
         },
         'latest',
         'assessment.requirement_id = latest.requirement_id AND assessment.assessment_date = latest.latest_date',
       )
-      .where('assessment.requirement_id IN (:...requirementIds)', { requirementIds })
-      .andWhere('assessment.status = :status', { status: AssessmentStatus.COMPLETED });
+      .where('assessment.requirement_id IN (:...requirementIds)', {
+        requirementIds,
+      })
+      .andWhere('assessment.status = :status', {
+        status: AssessmentStatus.COMPLETED,
+      });
 
     return query.getMany();
   }
 
-  private async updateNextAssessmentDue(requirement: ComplianceRequirement): Promise<void> {
+  private async updateNextAssessmentDue(
+    requirement: ComplianceRequirement,
+  ): Promise<void> {
     const nextDue = new Date();
     nextDue.setDate(nextDue.getDate() + requirement.assessmentFrequencyDays);
-    
+
     requirement.nextAssessmentDue = nextDue;
     await this.requirementRepository.save(requirement);
   }
@@ -815,7 +921,9 @@ export class ComplianceService {
         startDate,
         endDate,
       })
-      .andWhere('assessment.status = :status', { status: AssessmentStatus.COMPLETED });
+      .andWhere('assessment.status = :status', {
+        status: AssessmentStatus.COMPLETED,
+      });
 
     if (regulationType) {
       query.andWhere('regulation.type = :type', { type: regulationType });
@@ -825,20 +933,31 @@ export class ComplianceService {
 
     const summary = {
       totalAssessments: assessments.length,
-      compliant: assessments.filter(a => a.score === ComplianceScore.COMPLIANT).length,
-      nonCompliant: assessments.filter(a => a.score === ComplianceScore.NON_COMPLIANT).length,
-      partiallyCompliant: assessments.filter(a => a.score === ComplianceScore.PARTIALLY_COMPLIANT).length,
+      compliant: assessments.filter(
+        (a) => a.score === ComplianceScore.COMPLIANT,
+      ).length,
+      nonCompliant: assessments.filter(
+        (a) => a.score === ComplianceScore.NON_COMPLIANT,
+      ).length,
+      partiallyCompliant: assessments.filter(
+        (a) => a.score === ComplianceScore.PARTIALLY_COMPLIANT,
+      ).length,
       averageScore: this.calculateAverageScore(assessments),
       complianceRate: 0,
     };
 
-    summary.complianceRate = summary.totalAssessments > 0 
-      ? (summary.compliant / summary.totalAssessments) * 100 
-      : 0;
+    summary.complianceRate =
+      summary.totalAssessments > 0
+        ? (summary.compliant / summary.totalAssessments) * 100
+        : 0;
 
     const byRegulation = this.groupAssessmentsByRegulation(assessments);
     const byRiskLevel = this.groupAssessmentsByRiskLevel(assessments);
-    const trends = await this.calculateComplianceTrends(startDate, endDate, regulationType);
+    const trends = await this.calculateComplianceTrends(
+      startDate,
+      endDate,
+      regulationType,
+    );
 
     return {
       period: { startDate, endDate },
@@ -847,7 +966,7 @@ export class ComplianceService {
       byRegulation,
       byRiskLevel,
       trends,
-      assessments: assessments.map(a => ({
+      assessments: assessments.map((a) => ({
         id: a.id,
         requirementCode: a.requirement?.code,
         regulationCode: a.requirement?.regulation?.code,
@@ -884,22 +1003,31 @@ export class ComplianceService {
     const summary = {
       totalFindings: findings.length,
       bySeverity: {
-        critical: findings.filter(f => f.severity === FindingSeverity.CRITICAL).length,
-        high: findings.filter(f => f.severity === FindingSeverity.HIGH).length,
-        medium: findings.filter(f => f.severity === FindingSeverity.MEDIUM).length,
-        low: findings.filter(f => f.severity === FindingSeverity.LOW).length,
+        critical: findings.filter(
+          (f) => f.severity === FindingSeverity.CRITICAL,
+        ).length,
+        high: findings.filter((f) => f.severity === FindingSeverity.HIGH)
+          .length,
+        medium: findings.filter((f) => f.severity === FindingSeverity.MEDIUM)
+          .length,
+        low: findings.filter((f) => f.severity === FindingSeverity.LOW).length,
       },
       byStatus: {
-        open: findings.filter(f => f.status === FindingStatus.OPEN).length,
-        inProgress: findings.filter(f => f.status === FindingStatus.IN_PROGRESS).length,
-        resolved: findings.filter(f => f.status === FindingStatus.RESOLVED).length,
-        closed: findings.filter(f => f.status === FindingStatus.CLOSED).length,
+        open: findings.filter((f) => f.status === FindingStatus.OPEN).length,
+        inProgress: findings.filter(
+          (f) => f.status === FindingStatus.IN_PROGRESS,
+        ).length,
+        resolved: findings.filter((f) => f.status === FindingStatus.RESOLVED)
+          .length,
+        closed: findings.filter((f) => f.status === FindingStatus.CLOSED)
+          .length,
       },
       averageResolutionTime: this.calculateAverageResolutionTime(findings),
-      overdueFindings: findings.filter(f => 
-        f.dueDate < new Date() && 
-        f.status !== FindingStatus.RESOLVED && 
-        f.status !== FindingStatus.CLOSED
+      overdueFindings: findings.filter(
+        (f) =>
+          f.dueDate < new Date() &&
+          f.status !== FindingStatus.RESOLVED &&
+          f.status !== FindingStatus.CLOSED,
       ).length,
     };
 
@@ -907,7 +1035,7 @@ export class ComplianceService {
       period: { startDate, endDate },
       severity: severity || 'ALL',
       summary,
-      findings: findings.map(f => ({
+      findings: findings.map((f) => ({
         id: f.id,
         title: f.title,
         severity: f.severity,
@@ -919,7 +1047,8 @@ export class ComplianceService {
         regulationCode: f.assessment?.requirement?.regulation?.code,
         correctiveActionsCount: f.correctiveActions?.length || 0,
         daysSinceIdentified: Math.floor(
-          (new Date().getTime() - f.identifiedDate.getTime()) / (1000 * 60 * 60 * 24)
+          (new Date().getTime() - f.identifiedDate.getTime()) /
+            (1000 * 60 * 60 * 24),
         ),
       })),
     };
@@ -970,7 +1099,9 @@ export class ComplianceService {
         startDate,
         endDate,
       })
-      .andWhere('assessment.status = :status', { status: AssessmentStatus.COMPLETED });
+      .andWhere('assessment.status = :status', {
+        status: AssessmentStatus.COMPLETED,
+      });
 
     if (regulationType) {
       query.andWhere('regulation.type = :type', { type: regulationType });
@@ -978,7 +1109,9 @@ export class ComplianceService {
 
     const assessments = await query.getMany();
 
-    const compliant = assessments.filter(a => a.score === ComplianceScore.COMPLIANT).length;
+    const compliant = assessments.filter(
+      (a) => a.score === ComplianceScore.COMPLIANT,
+    ).length;
     const total = assessments.length;
 
     return {
@@ -990,82 +1123,93 @@ export class ComplianceService {
   }
 
   private calculateAverageScore(assessments: ComplianceAssessment[]): number {
-    const scored = assessments.filter(a => a.scorePercentage !== null);
+    const scored = assessments.filter((a) => a.scorePercentage !== null);
     if (scored.length === 0) return 0;
 
     const total = scored.reduce((sum, a) => sum + (a.scorePercentage || 0), 0);
     return Math.round((total / scored.length) * 100) / 100;
   }
 
-  private groupAssessmentsByRegulation(assessments: ComplianceAssessment[]): any {
-    const grouped = assessments.reduce((acc, assessment) => {
-      const regulation = assessment.requirement?.regulation;
-      if (!regulation) return acc;
+  private groupAssessmentsByRegulation(
+    assessments: ComplianceAssessment[],
+  ): any {
+    const grouped = assessments.reduce(
+      (acc, assessment) => {
+        const regulation = assessment.requirement?.regulation;
+        if (!regulation) return acc;
 
-      const key = regulation.code;
-      if (!acc[key]) {
-        acc[key] = {
-          regulationCode: regulation.code,
-          regulationTitle: regulation.title,
-          regulationType: regulation.type,
-          totalAssessments: 0,
-          compliant: 0,
-          nonCompliant: 0,
-          partiallyCompliant: 0,
-          complianceRate: 0,
-        };
-      }
+        const key = regulation.code;
+        if (!acc[key]) {
+          acc[key] = {
+            regulationCode: regulation.code,
+            regulationTitle: regulation.title,
+            regulationType: regulation.type,
+            totalAssessments: 0,
+            compliant: 0,
+            nonCompliant: 0,
+            partiallyCompliant: 0,
+            complianceRate: 0,
+          };
+        }
 
-      acc[key].totalAssessments++;
-      
-      switch (assessment.score) {
-        case ComplianceScore.COMPLIANT:
-          acc[key].compliant++;
-          break;
-        case ComplianceScore.NON_COMPLIANT:
-          acc[key].nonCompliant++;
-          break;
-        case ComplianceScore.PARTIALLY_COMPLIANT:
-          acc[key].partiallyCompliant++;
-          break;
-      }
+        acc[key].totalAssessments++;
 
-      acc[key].complianceRate = (acc[key].compliant / acc[key].totalAssessments) * 100;
+        switch (assessment.score) {
+          case ComplianceScore.COMPLIANT:
+            acc[key].compliant++;
+            break;
+          case ComplianceScore.NON_COMPLIANT:
+            acc[key].nonCompliant++;
+            break;
+          case ComplianceScore.PARTIALLY_COMPLIANT:
+            acc[key].partiallyCompliant++;
+            break;
+        }
 
-      return acc;
-    }, {} as Record<string, any>);
+        acc[key].complianceRate =
+          (acc[key].compliant / acc[key].totalAssessments) * 100;
+
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
 
     return Object.values(grouped);
   }
 
-  private groupAssessmentsByRiskLevel(assessments: ComplianceAssessment[]): any {
-    const grouped = assessments.reduce((acc, assessment) => {
-      const riskLevel = assessment.requirement?.riskLevel;
-      if (!riskLevel) return acc;
+  private groupAssessmentsByRiskLevel(
+    assessments: ComplianceAssessment[],
+  ): any {
+    const grouped = assessments.reduce(
+      (acc, assessment) => {
+        const riskLevel = assessment.requirement?.riskLevel;
+        if (!riskLevel) return acc;
 
-      if (!acc[riskLevel]) {
-        acc[riskLevel] = {
-          riskLevel,
-          totalAssessments: 0,
-          compliant: 0,
-          nonCompliant: 0,
-          complianceRate: 0,
-        };
-      }
+        if (!acc[riskLevel]) {
+          acc[riskLevel] = {
+            riskLevel,
+            totalAssessments: 0,
+            compliant: 0,
+            nonCompliant: 0,
+            complianceRate: 0,
+          };
+        }
 
-      acc[riskLevel].totalAssessments++;
-      
-      if (assessment.score === ComplianceScore.COMPLIANT) {
-        acc[riskLevel].compliant++;
-      } else if (assessment.score === ComplianceScore.NON_COMPLIANT) {
-        acc[riskLevel].nonCompliant++;
-      }
+        acc[riskLevel].totalAssessments++;
 
-      acc[riskLevel].complianceRate = 
-        (acc[riskLevel].compliant / acc[riskLevel].totalAssessments) * 100;
+        if (assessment.score === ComplianceScore.COMPLIANT) {
+          acc[riskLevel].compliant++;
+        } else if (assessment.score === ComplianceScore.NON_COMPLIANT) {
+          acc[riskLevel].nonCompliant++;
+        }
 
-      return acc;
-    }, {} as Record<string, any>);
+        acc[riskLevel].complianceRate =
+          (acc[riskLevel].compliant / acc[riskLevel].totalAssessments) * 100;
+
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
 
     return Object.values(grouped);
   }
@@ -1078,7 +1222,7 @@ export class ComplianceService {
     // Calculate week-by-week trends within the date range
     const trends = [];
     const currentDate = new Date(startDate);
-    
+
     while (currentDate <= endDate) {
       const weekStart = new Date(currentDate);
       const weekEnd = new Date(currentDate);
@@ -1107,13 +1251,13 @@ export class ComplianceService {
   }
 
   private calculateAverageResolutionTime(findings: Finding[]): number {
-    const resolved = findings.filter(f => f.resolvedDate);
+    const resolved = findings.filter((f) => f.resolvedDate);
     if (resolved.length === 0) return 0;
 
     const totalDays = resolved.reduce((sum, finding) => {
       const days = Math.floor(
-        (finding.resolvedDate!.getTime() - finding.identifiedDate.getTime()) / 
-        (1000 * 60 * 60 * 24)
+        (finding.resolvedDate!.getTime() - finding.identifiedDate.getTime()) /
+          (1000 * 60 * 60 * 24),
       );
       return sum + days;
     }, 0);
@@ -1127,7 +1271,9 @@ export class ComplianceService {
     requirements: CreateComplianceRequirementDto[],
     createdBy: number,
   ): Promise<ComplianceRequirement[]> {
-    this.logger.log(`Bulk creating ${requirements.length} compliance requirements`);
+    this.logger.log(
+      `Bulk creating ${requirements.length} compliance requirements`,
+    );
 
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
@@ -1143,21 +1289,30 @@ export class ComplianceService {
         });
 
         if (!regulation) {
-          throw new BadRequestException(`Regulation with ID ${reqDto.regulationId} not found`);
+          throw new BadRequestException(
+            `Regulation with ID ${reqDto.regulationId} not found`,
+          );
         }
 
         // Check for duplicate codes
-        const existing = await queryRunner.manager.findOne(ComplianceRequirement, {
-          where: { code: reqDto.code },
-        });
+        const existing = await queryRunner.manager.findOne(
+          ComplianceRequirement,
+          {
+            where: { code: reqDto.code },
+          },
+        );
 
         if (existing) {
-          this.logger.warn(`Skipping duplicate requirement code: ${reqDto.code}`);
+          this.logger.warn(
+            `Skipping duplicate requirement code: ${reqDto.code}`,
+          );
           continue;
         }
 
         const nextAssessmentDue = new Date();
-        nextAssessmentDue.setDate(nextAssessmentDue.getDate() + reqDto.assessmentFrequencyDays);
+        nextAssessmentDue.setDate(
+          nextAssessmentDue.getDate() + reqDto.assessmentFrequencyDays,
+        );
 
         const requirement = queryRunner.manager.create(ComplianceRequirement, {
           ...reqDto,
@@ -1181,9 +1336,10 @@ export class ComplianceService {
         metadata: { count: savedRequirements.length },
       });
 
-      this.logger.log(`Successfully created ${savedRequirements.length} requirements`);
+      this.logger.log(
+        `Successfully created ${savedRequirements.length} requirements`,
+      );
       return savedRequirements;
-
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.logger.error('Bulk requirement creation failed:', error);
@@ -1198,7 +1354,9 @@ export class ComplianceService {
     status: AssessmentStatus,
     updatedBy: number,
   ): Promise<void> {
-    this.logger.log(`Bulk updating ${assessmentIds.length} assessment statuses to ${status}`);
+    this.logger.log(
+      `Bulk updating ${assessmentIds.length} assessment statuses to ${status}`,
+    );
 
     const result = await this.assessmentRepository.update(
       { id: In(assessmentIds) },
@@ -1236,8 +1394,10 @@ export class ComplianceService {
       .where('audit.timestamp < :cutoffDate', { cutoffDate })
       .getRawOne();
 
-    this.logger.log(`Found ${result.count} audit logs older than ${retentionDays} days for archival`);
-    
+    this.logger.log(
+      `Found ${result.count} audit logs older than ${retentionDays} days for archival`,
+    );
+
     // Implementation would move to archive storage rather than delete
     // await this.archiveOldAuditLogs(cutoffDate);
   }
@@ -1259,7 +1419,9 @@ export class ComplianceService {
       await this.assessmentRepository.save(assessment);
     }
 
-    this.logger.log(`Updated ${expiredAssessments.length} expired assessments to overdue`);
+    this.logger.log(
+      `Updated ${expiredAssessments.length} expired assessments to overdue`,
+    );
   }
 
   // ==================== UTILITY METHODS ====================
@@ -1300,7 +1462,9 @@ export class ComplianceService {
     return finding;
   }
 
-  async getUpcomingAssessments(days: number = 30): Promise<ComplianceAssessment[]> {
+  async getUpcomingAssessments(
+    days: number = 30,
+  ): Promise<ComplianceAssessment[]> {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + days);
 

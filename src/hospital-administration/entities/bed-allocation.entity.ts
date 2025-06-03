@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Bed } from './bed.entity';
 import { Patient } from './patient.entity';
 import { Staff } from './staff.entity';
@@ -29,15 +37,15 @@ export class BedAllocation {
   @Column({ name: 'assigned_by' })
   assignedBy: string;
 
-  @ManyToOne(() => Bed, bed => bed.allocations)
+  @ManyToOne(() => Bed, (bed) => bed.allocations)
   @JoinColumn({ name: 'bed_id' })
   bed: Bed;
 
-  @ManyToOne(() => Patient, patient => patient.bedAllocations)
+  @ManyToOne(() => Patient, (patient) => patient.bedAllocations)
   @JoinColumn({ name: 'patient_id' })
   patient: Patient;
 
-  @ManyToOne(() => Staff, staff => staff)
+  @ManyToOne(() => Staff, (staff) => staff)
   @JoinColumn({ name: 'assigned_by' })
   assignedByStaff: Staff;
 

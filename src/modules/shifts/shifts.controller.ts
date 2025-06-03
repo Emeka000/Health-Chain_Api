@@ -1,14 +1,19 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from "@nestjs/common"
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger"
-import type { ShiftsService } from "./shifts.service"
-import type { CreateShiftDto } from "./dto/create-shift.dto"
-import type { CreateShiftHandoffDto } from "./dto/create-shift-handoff.dto"
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard"
+import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import type { ShiftsService } from './shifts.service';
+import type { CreateShiftDto } from './dto/create-shift.dto';
+import type { CreateShiftHandoffDto } from './dto/create-shift-handoff.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@ApiTags("shifts")
+@ApiTags('shifts')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("shifts")
+@Controller('shifts')
 export class ShiftsController {
   constructor(private readonly shiftsService: ShiftsService) {}
 
@@ -20,10 +25,10 @@ export class ShiftsController {
   }
 
   @Get()
-  @ApiOperation({ summary: "Get all shifts" })
-  @ApiResponse({ status: 200, description: "List of shifts" })
+  @ApiOperation({ summary: 'Get all shifts' })
+  @ApiResponse({ status: 200, description: 'List of shifts' })
   findAll() {
-    return this.shiftsService.findAll()
+    return this.shiftsService.findAll();
   }
 
   @Get(':id')

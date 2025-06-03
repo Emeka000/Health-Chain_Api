@@ -10,16 +10,23 @@ export class EncryptionService {
   private readonly phiKey: string;
 
   constructor(private configService: ConfigService) {
-    this.algorithm = this.configService.get('ENCRYPTION_ALGORITHM', 'aes-256-gcm');
+    this.algorithm = this.configService.get(
+      'ENCRYPTION_ALGORITHM',
+      'aes-256-gcm',
+    );
     this.key = this.configService.get<string>('FIELD_ENCRYPTION_KEY') || '';
     this.phiKey = this.configService.get<string>('PHI_ENCRYPTION_KEY') || '';
 
     if (!this.key || !this.phiKey) {
-      throw new Error('Encryption keys must be configured for HIPAA compliance');
+      throw new Error(
+        'Encryption keys must be configured for HIPAA compliance',
+      );
     }
 
     if (this.key.length !== 32 || this.phiKey.length !== 32) {
-      throw new Error('Encryption keys must be exactly 32 characters for AES-256');
+      throw new Error(
+        'Encryption keys must be exactly 32 characters for AES-256',
+      );
     }
   }
 
@@ -29,7 +36,7 @@ export class EncryptionService {
    */
   encryptPHI(data: string): string {
     if (!data) return data;
-    
+
     try {
       const encrypted = CryptoJS.AES.encrypt(data, this.phiKey).toString();
       return `PHI:${encrypted}`;
@@ -63,13 +70,17 @@ export class EncryptionService {
 
     try {
       const iv = crypto.randomBytes(16);
-      const cipher = crypto.createCipheriv('aes-256-gcm', Buffer.from(this.key, 'hex'), iv);
-      
+      const cipher = crypto.createCipheriv(
+        'aes-256-gcm',
+        Buffer.from(this.key, 'hex'),
+        iv,
+      );
+
       let encrypted = cipher.update(data, 'utf8', 'hex');
       encrypted += cipher.final('hex');
-      
+
       const authTag = cipher.getAuthTag();
-      
+
       return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
     } catch (error) {
       throw new Error(`Encryption failed: ${error.message}`);
@@ -93,13 +104,17 @@ export class EncryptionService {
       const [ivHex, authTagHex, encrypted] = parts;
       const iv = Buffer.from(ivHex, 'hex');
       const authTag = Buffer.from(authTagHex, 'hex');
-      
-      const decipher = crypto.createDecipheriv('aes-256-gcm', Buffer.from(this.key, 'hex'), iv);
+
+      const decipher = crypto.createDecipheriv(
+        'aes-256-gcm',
+        Buffer.from(this.key, 'hex'),
+        iv,
+      );
       decipher.setAuthTag(authTag);
-      
+
       let decrypted = decipher.update(encrypted, 'hex', 'utf8');
       decrypted += decipher.final('utf8');
-      
+
       return decrypted;
     } catch (error) {
       throw new Error(`Decryption failed: ${error.message}`);
@@ -111,11 +126,8 @@ export class EncryptionService {
    */
   hashForIndex(data: string): string {
     if (!data) return data;
-    
-    return crypto
-      .createHmac('sha256', this.key)
-      .update(data)
-      .digest('hex');
+
+    return crypto.createHmac('sha256', this.key).update(data).digest('hex');
   }
 
   /**
@@ -129,6 +141,10 @@ export class EncryptionService {
    * Validate encryption key strength
    */
   validateKeyStrength(key: string): boolean {
-    return !!(key && key.length >= 32 && /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/.test(key));
+    return !!(
+      key &&
+      key.length >= 32 &&
+      /^[a-zA-Z0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]*$/.test(key)
+    );
   }
-} 
+}

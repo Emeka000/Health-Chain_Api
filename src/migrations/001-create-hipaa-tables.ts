@@ -7,7 +7,7 @@ export class CreateHIPAATables1703168400000 implements MigrationInterface {
     // Enable necessary PostgreSQL extensions
     await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
     await queryRunner.query('CREATE EXTENSION IF NOT EXISTS "pgcrypto"');
-    
+
     // Create audit logs table
     await queryRunner.createTable(
       new Table({
@@ -33,7 +33,19 @@ export class CreateHIPAATables1703168400000 implements MigrationInterface {
           {
             name: 'action',
             type: 'enum',
-            enum: ['CREATE', 'READ', 'UPDATE', 'DELETE', 'LOGIN', 'LOGOUT', 'ACCESS_ATTEMPT', 'EXPORT', 'PRINT', 'BACKUP', 'RESTORE'],
+            enum: [
+              'CREATE',
+              'READ',
+              'UPDATE',
+              'DELETE',
+              'LOGIN',
+              'LOGOUT',
+              'ACCESS_ATTEMPT',
+              'EXPORT',
+              'PRINT',
+              'BACKUP',
+              'RESTORE',
+            ],
           },
           {
             name: 'result',
@@ -295,7 +307,9 @@ export class CreateHIPAATables1703168400000 implements MigrationInterface {
     `);
 
     // Enable Row Level Security (RLS) for HIPAA compliance
-    await queryRunner.query('ALTER TABLE doctors_hipaa ENABLE ROW LEVEL SECURITY');
+    await queryRunner.query(
+      'ALTER TABLE doctors_hipaa ENABLE ROW LEVEL SECURITY',
+    );
     await queryRunner.query('ALTER TABLE audit_logs ENABLE ROW LEVEL SECURITY');
 
     // Create security policies (these would be customized based on your authentication system)
@@ -332,15 +346,23 @@ export class CreateHIPAATables1703168400000 implements MigrationInterface {
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     // Drop triggers and functions
-    await queryRunner.query('DROP TRIGGER IF EXISTS update_doctors_hipaa_updated_at ON doctors_hipaa');
-    await queryRunner.query('DROP FUNCTION IF EXISTS update_updated_at_column()');
+    await queryRunner.query(
+      'DROP TRIGGER IF EXISTS update_doctors_hipaa_updated_at ON doctors_hipaa',
+    );
+    await queryRunner.query(
+      'DROP FUNCTION IF EXISTS update_updated_at_column()',
+    );
 
     // Drop policies
-    await queryRunner.query('DROP POLICY IF EXISTS doctors_hipaa_select_policy ON doctors_hipaa');
-    await queryRunner.query('DROP POLICY IF EXISTS audit_logs_insert_policy ON audit_logs');
+    await queryRunner.query(
+      'DROP POLICY IF EXISTS doctors_hipaa_select_policy ON doctors_hipaa',
+    );
+    await queryRunner.query(
+      'DROP POLICY IF EXISTS audit_logs_insert_policy ON audit_logs',
+    );
 
     // Drop tables
     await queryRunner.dropTable('doctors_hipaa');
     await queryRunner.dropTable('audit_logs');
   }
-} 
+}

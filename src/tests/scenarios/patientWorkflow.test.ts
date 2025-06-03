@@ -1,4 +1,8 @@
-import { createSyntheticPatient, admitPatient, dischargePatient } from '../helpers/scenarioUtils';
+import {
+  createSyntheticPatient,
+  admitPatient,
+  dischargePatient,
+} from '../helpers/scenarioUtils';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();

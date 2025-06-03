@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Like, FindManyOptions } from 'typeorm';
 import { Bed, BedStatus } from '../entities/bed.entity';
@@ -16,7 +20,7 @@ export class BedService {
 
   async create(createBedDto: any): Promise<Bed> {
     const existingBed = await this.bedRepository.findOne({
-      where: { bedNumber: createBedDto.bedNumber }
+      where: { bedNumber: createBedDto.bedNumber },
     });
 
     if (existingBed) {
@@ -28,14 +32,21 @@ export class BedService {
   }
 
   async findAll(query: FilterQuery): Promise<{ data: Bed[]; pagination: any }> {
-    const { page = 1, limit = 10, sortBy = 'bedNumber', sortOrder = 'ASC', search, status } = query;
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'bedNumber',
+      sortOrder = 'ASC',
+      search,
+      status,
+    } = query;
 
     const whereConditions: any = {};
-    
+
     if (search) {
       whereConditions.bedNumber = Like(`%${search}%`);
     }
-    
+
     if (status) {
       whereConditions.status = status;
     }
@@ -88,7 +99,12 @@ export class BedService {
   async findOne(id: string): Promise<Bed> {
     const bed = await this.bedRepository.findOne({
       where: { id },
-      relations: ['hospital', 'department', 'allocations', 'allocations.patient'],
+      relations: [
+        'hospital',
+        'department',
+        'allocations',
+        'allocations.patient',
+      ],
     });
 
     if (!bed) {
@@ -100,14 +116,14 @@ export class BedService {
 
   async update(id: string, updateDto: any): Promise<Bed> {
     const bed = await this.findOne(id);
-    
+
     Object.assign(bed, updateDto);
     return await this.bedRepository.save(bed);
   }
 
   async remove(id: string): Promise<void> {
     const bed = await this.findOne(id);
-    
+
     if (bed.status === BedStatus.OCCUPIED) {
       throw new BadRequestException('Cannot delete an occupied bed');
     }
@@ -117,7 +133,7 @@ export class BedService {
 
   async allocateBed(bedId: string, allocationDto: any): Promise<BedAllocation> {
     const bed = await this.findOne(bedId);
-    
+
     if (bed.status !== BedStatus.AVAILABLE) {
       throw new BadRequestException('Bed is not available for allocation');
     }
@@ -142,7 +158,7 @@ export class BedService {
 
   async deallocateBed(bedId: string, deallocationDto: any): Promise<any> {
     const bed = await this.findOne(bedId);
-    
+
     if (bed.status !== BedStatus.OCCUPIED) {
       throw new BadRequestException('Bed is not currently occupied');
     }
@@ -172,7 +188,10 @@ export class BedService {
     };
   }
 
-  async getOccupancyHistory(bedId: string, query: any): Promise<BedAllocation[]> {
+  async getOccupancyHistory(
+    bedId: string,
+    query: any,
+  ): Promise<BedAllocation[]> {
     return await this.bedAllocationRepository.find({
       where: { bedId },
       relations: ['patient', 'assignedByStaff'],
@@ -184,17 +203,16 @@ export class BedService {
   async assignBed(bedId: number): Promise<Bed> {
     const bed = await this.bedRepository.findOne({ where: { id: bedId } });
     if (!bed || !bed.isAvailable) throw new Error('Bed not available');
-  
+
     bed.isAvailable = false;
     return this.bedRepository.save(bed);
   }
-  
+
   async releaseBed(bedId: number): Promise<Bed> {
     const bed = await this.bedRepository.findOne({ where: { id: bedId } });
     if (!bed) throw new Error('Bed not found');
-  
+
     bed.isAvailable = true;
     return this.bedRepository.save(bed);
   }
-  
 }

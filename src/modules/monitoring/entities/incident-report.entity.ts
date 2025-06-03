@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('incident_reports')
 export class IncidentReport {
@@ -6,7 +12,12 @@ export class IncidentReport {
   id: string;
 
   @Column({ type: 'varchar' })
-  incidentType: 'system_error' | 'data_breach' | 'equipment_failure' | 'patient_safety' | 'other';
+  incidentType:
+    | 'system_error'
+    | 'data_breach'
+    | 'equipment_failure'
+    | 'patient_safety'
+    | 'other';
 
   @Column({ type: 'varchar' })
   severity: 'low' | 'medium' | 'high' | 'critical';
@@ -60,4 +71,4 @@ export class IncidentReport {
 
   @UpdateDateColumn()
   updatedAt: Date;
-} 
+}

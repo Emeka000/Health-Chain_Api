@@ -1,10 +1,24 @@
-import { Injectable, Logger, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, Between, LessThan, In } from 'typeorm';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { TrainingProgram, ProgramStatus } from '../entities/training-program.entity';
-import { TrainingRecord, TrainingStatus } from '../entities/training-record.entity';
-import { CompetencyAssessment, CompetencyLevel } from '../entities/competency-assessment.entity';
+import {
+  TrainingProgram,
+  ProgramStatus,
+} from '../entities/training-program.entity';
+import {
+  TrainingRecord,
+  TrainingStatus,
+} from '../entities/training-record.entity';
+import {
+  CompetencyAssessment,
+  CompetencyLevel,
+} from '../entities/competency-assessment.entity';
 import { CreateTrainingProgramDto } from '../../dto/create-training-program.dto';
 import { TrainingMetricsDto } from '../../dto/compliance-dashboard.dto';
 import { NotificationService } from '../../services/notification.service';
@@ -36,7 +50,9 @@ export class TrainingService {
     });
 
     if (existingProgram) {
-      throw new BadRequestException(`Training program with code ${createProgramDto.code} already exists`);
+      throw new BadRequestException(
+        `Training program with code ${createProgramDto.code} already exists`,
+      );
     }
 
     const program = this.programRepository.create({
@@ -64,7 +80,9 @@ export class TrainingService {
     assignedBy: number,
     dueDate?: Date,
   ): Promise<TrainingRecord> {
-    this.logger.log(`Assigning training program ${programId} to employee ${employeeId}`);
+    this.logger.log(
+      `Assigning training program ${programId} to employee ${employeeId}`,
+    );
 
     const program = await this.programRepository.findOne({
       where: { id: programId, status: ProgramStatus.ACTIVE },
@@ -84,7 +102,9 @@ export class TrainingService {
     });
 
     if (existingRecord) {
-      throw new BadRequestException('Training already assigned to this employee');
+      throw new BadRequestException(
+        'Training already assigned to this employee',
+      );
     }
 
     const defaultDueDate = new Date();
@@ -101,7 +121,10 @@ export class TrainingService {
     const savedRecord = await this.recordRepository.save(record);
 
     // Send assignment notification
-    await this.notificationService.sendTrainingAssignmentNotification(savedRecord, program);
+    await this.notificationService.sendTrainingAssignmentNotification(
+      savedRecord,
+      program,
+    );
 
     await this.auditService.log({
       eventType: 'MODIFICATION',
@@ -150,9 +173,15 @@ export class TrainingService {
     record.attempts += 1;
 
     // Set expiration date if recertification is required
-    if (passed && record.program.recertificationRequired && record.program.recertificationPeriodMonths) {
+    if (
+      passed &&
+      record.program.recertificationRequired &&
+      record.program.recertificationPeriodMonths
+    ) {
       const expirationDate = new Date();
-      expirationDate.setMonth(expirationDate.getMonth() + record.program.recertificationPeriodMonths);
+      expirationDate.setMonth(
+        expirationDate.getMonth() + record.program.recertificationPeriodMonths,
+      );
       record.expirationDate = expirationDate;
     }
 
@@ -165,7 +194,10 @@ export class TrainingService {
     const savedRecord = await this.recordRepository.save(record);
 
     // Send completion notification
-    await this.notificationService.sendTrainingCompletionNotification(savedRecord, passed);
+    await this.notificationService.sendTrainingCompletionNotification(
+      savedRecord,
+      passed,
+    );
 
     await this.auditService.log({
       eventType: 'MODIFICATION',
@@ -179,21 +211,21 @@ export class TrainingService {
     return savedRecord;
   }
 
-  async createCompetencyAssessment(
-    assessmentData: {
-      employeeId: number;
-      programId: number;
-      competencyType: string;
-      assessmentMethod: string;
-      score: number;
-      maximumScore: number;
-      assessorId: number;
-      strengths?: string;
-      improvementAreas?: string;
-      developmentPlan?: string;
-    },
-  ): Promise<CompetencyAssessment> {
-    this.logger.log(`Creating competency assessment for employee ${assessmentData.employeeId}`);
+  async createCompetencyAssessment(assessmentData: {
+    employeeId: number;
+    programId: number;
+    competencyType: string;
+    assessmentMethod: string;
+    score: number;
+    maximumScore: number;
+    assessorId: number;
+    strengths?: string;
+    improvementAreas?: string;
+    developmentPlan?: string;
+  }): Promise<CompetencyAssessment> {
+    this.logger.log(
+      `Creating competency assessment for employee ${assessmentData.employeeId}`,
+    );
 
     const program = await this.programRepository.findOne({
       where: { id: assessmentData.programId },
@@ -203,8 +235,11 @@ export class TrainingService {
       throw new NotFoundException('Training program not found');
     }
 
-    const competencyAchieved = (assessmentData.score / assessmentData.maximumScore) >= 0.8; // 80% threshold
-    const competencyLevel = this.determineCompetencyLevel(assessmentData.score / assessmentData.maximumScore);
+    const competencyAchieved =
+      assessmentData.score / assessmentData.maximumScore >= 0.8; // 80% threshold
+    const competencyLevel = this.determineCompetencyLevel(
+      assessmentData.score / assessmentData.maximumScore,
+    );
 
     const assessment = this.competencyRepository.create({
       ...assessmentData,
@@ -269,8 +304,10 @@ export class TrainingService {
       },
     });
 
-    const totalCurrentlyTrained = currentlyTrained + currentlyTrainedWithExpiration;
-    const completionRate = totalEmployees > 0 ? (totalCurrentlyTrained / totalEmployees) * 100 : 0;
+    const totalCurrentlyTrained =
+      currentlyTrained + currentlyTrainedWithExpiration;
+    const completionRate =
+      totalEmployees > 0 ? (totalCurrentlyTrained / totalEmployees) * 100 : 0;
 
     return {
       completionRate: Math.round(completionRate * 100) / 100,
@@ -295,19 +332,23 @@ export class TrainingService {
     });
 
     // Group training by status
-    const statusCounts = trainingRecords.reduce((acc, record) => {
-      acc[record.status] = (acc[record.status] || 0) + 1;
-      return acc;
-    }, {} as Record<string, number>);
+    const statusCounts = trainingRecords.reduce(
+      (acc, record) => {
+        acc[record.status] = (acc[record.status] || 0) + 1;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
 
     // Find expiring certifications (within 30 days)
     const thirtyDaysFromNow = new Date();
     thirtyDaysFromNow.setDate(thirtyDaysFromNow.getDate() + 30);
 
     const expiringCertifications = trainingRecords.filter(
-      record => record.expirationDate && 
-                record.expirationDate <= thirtyDaysFromNow && 
-                record.status === TrainingStatus.COMPLETED
+      (record) =>
+        record.expirationDate &&
+        record.expirationDate <= thirtyDaysFromNow &&
+        record.status === TrainingStatus.COMPLETED,
     );
 
     return {
@@ -318,8 +359,9 @@ export class TrainingService {
       expiringCertifications,
       totalTraining: trainingRecords.length,
       completedTraining: statusCounts[TrainingStatus.COMPLETED] || 0,
-      pendingTraining: (statusCounts[TrainingStatus.NOT_STARTED] || 0) + 
-                      (statusCounts[TrainingStatus.IN_PROGRESS] || 0),
+      pendingTraining:
+        (statusCounts[TrainingStatus.NOT_STARTED] || 0) +
+        (statusCounts[TrainingStatus.IN_PROGRESS] || 0),
     };
   }
 
@@ -342,7 +384,9 @@ export class TrainingService {
       await this.notificationService.sendExpiringTrainingNotification(record);
     }
 
-    this.logger.log(`Processed ${expiringRecords.length} expiring training records`);
+    this.logger.log(
+      `Processed ${expiringRecords.length} expiring training records`,
+    );
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_9AM)
@@ -374,7 +418,9 @@ export class TrainingService {
       }
     }
 
-    this.logger.log(`Updated ${expiredRecords.length} expired training records`);
+    this.logger.log(
+      `Updated ${expiredRecords.length} expired training records`,
+    );
   }
 
   private async getUniqueEmployeeCount(): Promise<number> {
@@ -407,7 +453,7 @@ export class TrainingService {
 
   private calculateNextAssessmentDate(level: CompetencyLevel): Date {
     const nextDate = new Date();
-    
+
     switch (level) {
       case CompetencyLevel.EXPERT:
         nextDate.setFullYear(nextDate.getFullYear() + 2); // 2 years
@@ -422,7 +468,7 @@ export class TrainingService {
         nextDate.setMonth(nextDate.getMonth() + 3); // 3 months
         break;
     }
-    
+
     return nextDate;
   }
 
@@ -431,7 +477,7 @@ export class TrainingService {
     const programCode = record.programId.toString().padStart(3, '0');
     const employeeCode = record.employeeId.toString().padStart(5, '0');
     const sequence = Date.now().toString().slice(-4);
-    
+
     return `CERT-${year}-${programCode}-${employeeCode}-${sequence}`;
   }
 }

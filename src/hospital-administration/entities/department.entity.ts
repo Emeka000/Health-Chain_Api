@@ -1,4 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 import { Hospital } from './hospital.entity';
 import { Staff } from './staff.entity';
 import { Bed } from './bed.entity';
@@ -32,32 +41,30 @@ export class Department {
   @Column({ name: 'hospital_id' })
   hospitalId: string;
 
-  @ManyToOne(() => Hospital, hospital => hospital.departments)
+  @ManyToOne(() => Hospital, (hospital) => hospital.departments)
   @JoinColumn({ name: 'hospital_id' })
   hospital: Hospital;
 
-  @OneToMany(() => Staff, staff => staff.department)
+  @OneToMany(() => Staff, (staff) => staff.department)
   staff: Staff[];
 
-  @OneToMany(() => Bed, bed => bed.department)
+  @OneToMany(() => Bed, (bed) => bed.department)
   beds: Bed[];
 
-  @OneToMany(() => Ward, ward => ward.department)
+  @OneToMany(() => Ward, (ward) => ward.department)
   wards: Ward[];
 
-  @OneToMany(() => Equipment, equipment => equipment.department)
+  @OneToMany(() => Equipment, (equipment) => equipment.department)
   equipment: Equipment[];
 
-  @OneToMany(() => Workflow, workflow => workflow.department)
-workflows: Workflow[];
-
+  @OneToMany(() => Workflow, (workflow) => workflow.department)
+  workflows: Workflow[];
 
   @Column({ default: 0 })
   performanceScore: number;
 
   @Column('text', { array: true })
   specialties: string[];
-
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

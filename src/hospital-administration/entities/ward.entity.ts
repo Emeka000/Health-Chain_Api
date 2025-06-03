@@ -1,6 +1,12 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Department } from "./department.entity";
-import { Room } from "./room.entity";
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Department } from './department.entity';
+import { Room } from './room.entity';
 
 @Entity()
 export class Ward {
@@ -10,9 +16,9 @@ export class Ward {
   @Column()
   name: string;
 
-  @ManyToOne(() => Department, department => department.wards)
+  @ManyToOne(() => Department, (department) => department.wards)
   department: Department;
 
-  @OneToMany(() => Room, room => room.ward)
+  @OneToMany(() => Room, (room) => room.ward)
   rooms: Room[];
 }

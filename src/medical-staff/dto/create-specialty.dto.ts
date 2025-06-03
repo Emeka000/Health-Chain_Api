@@ -1,38 +1,45 @@
-import { IsString, IsOptional, IsBoolean, IsNumber, IsArray, ValidateNested } from "class-validator"
-import { Type } from "class-transformer"
+import {
+  IsString,
+  IsOptional,
+  IsBoolean,
+  IsNumber,
+  IsArray,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 class RequirementsDto {
   @IsString()
-  boardCertification: string
+  boardCertification: string;
 
   @IsNumber()
-  minimumExperience: number
+  minimumExperience: number;
 
   @IsArray()
   @IsString({ each: true })
-  requiredTraining: string[]
+  requiredTraining: string[];
 
   @IsNumber()
-  continuingEducationCredits: number
+  continuingEducationCredits: number;
 }
 
 export class CreateSpecialtyDto {
   @IsString()
-  name: string
+  name: string;
 
   @IsString()
-  code: string
+  code: string;
 
   @IsOptional()
   @IsString()
-  description?: string
+  description?: string;
 
   @IsOptional()
   @ValidateNested()
   @Type(() => RequirementsDto)
-  requirements?: RequirementsDto
+  requirements?: RequirementsDto;
 
   @IsOptional()
   @IsBoolean()
-  isActive?: boolean
+  isActive?: boolean;
 }

@@ -1,14 +1,27 @@
-import { Controller, Get, Post, Body, Patch, Param, UseGuards } from "@nestjs/common"
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from "@nestjs/swagger"
-import type { PatientsService } from "./patients.service"
-import type { CreatePatientDto } from "./dto/create-patient.dto"
-import type { UpdatePatientDto } from "./dto/update-patient.dto"
-import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard"
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
+import type { PatientsService } from './patients.service';
+import type { CreatePatientDto } from './dto/create-patient.dto';
+import type { UpdatePatientDto } from './dto/update-patient.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-@ApiTags("patients")
+@ApiTags('patients')
 @ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
-@Controller("patients")
+@Controller('patients')
 export class PatientsController {
   constructor(private readonly patientsService: PatientsService) {}
 
@@ -20,10 +33,10 @@ export class PatientsController {
   }
 
   @Get()
-  @ApiOperation({ summary: "Get all patients" })
-  @ApiResponse({ status: 200, description: "List of patients" })
+  @ApiOperation({ summary: 'Get all patients' })
+  @ApiResponse({ status: 200, description: 'List of patients' })
   findAll() {
-    return this.patientsService.findAll()
+    return this.patientsService.findAll();
   }
 
   @Get(':id')
@@ -33,10 +46,10 @@ export class PatientsController {
     return this.patientsService.findOne(id);
   }
 
-  @Patch(":id")
-  @ApiOperation({ summary: "Update patient" })
-  @ApiResponse({ status: 200, description: "Patient updated successfully" })
+  @Patch(':id')
+  @ApiOperation({ summary: 'Update patient' })
+  @ApiResponse({ status: 200, description: 'Patient updated successfully' })
   update(@Param('id') id: string, @Body() updatePatientDto: UpdatePatientDto) {
-    return this.patientsService.update(id, updatePatientDto)
+    return this.patientsService.update(id, updatePatientDto);
   }
 }

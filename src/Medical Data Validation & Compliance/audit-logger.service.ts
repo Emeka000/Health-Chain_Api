@@ -1,7 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 export interface MedicalAuditEvent {
-  eventType: 'CREATE' | 'READ' | 'UPDATE' | 'DELETE' | 'VALIDATION_FAILURE' | 'EMERGENCY_ALERT';
+  eventType:
+    | 'CREATE'
+    | 'READ'
+    | 'UPDATE'
+    | 'DELETE'
+    | 'VALIDATION_FAILURE'
+    | 'EMERGENCY_ALERT';
   userId: string;
   patientId?: string;
   resourceId?: string;
@@ -16,10 +22,12 @@ export interface MedicalAuditEvent {
 export class MedicalAuditService {
   private readonly logger = new Logger(MedicalAuditService.name);
 
-  async logMedicalEvent(event: Omit<MedicalAuditEvent, 'timestamp'>): Promise<void> {
+  async logMedicalEvent(
+    event: Omit<MedicalAuditEvent, 'timestamp'>,
+  ): Promise<void> {
     const auditEvent: MedicalAuditEvent = {
       ...event,
-      timestamp: new Date()
+      timestamp: new Date(),
     };
 
     // In production, this would be sent to a secure audit log system

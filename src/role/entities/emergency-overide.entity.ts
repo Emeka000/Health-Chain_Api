@@ -1,6 +1,6 @@
-import { User } from "src/entities/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Patient } from "./patient.entity";
+import { User } from 'src/entities/user.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Patient } from './patient.entity';
 
 @Entity('emergency_overrides')
 export class EmergencyOverride {

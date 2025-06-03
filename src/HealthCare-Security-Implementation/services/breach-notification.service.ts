@@ -34,22 +34,26 @@ export class BreachNotificationService {
     await this.documentBreachNotification(incident.id, breachData);
   }
 
-  private async calculateAffectedIndividuals(incident: SecurityIncident): Promise<number> {
+  private async calculateAffectedIndividuals(
+    incident: SecurityIncident,
+  ): Promise<number> {
     // This would integrate with your patient database to determine
     // how many individuals' PHI was potentially compromised
     if (incident.affectedPatientId) {
       return 1; // Single patient affected
     }
-    
+
     // For broader breaches, calculate based on the incident details
     // This is a simplified example
     return 0;
   }
 
-  private async notifyHHSAndMedia(breachData: BreachNotificationData): Promise<void> {
+  private async notifyHHSAndMedia(
+    breachData: BreachNotificationData,
+  ): Promise<void> {
     // For breaches affecting 500+ individuals, notify HHS within 60 days
     // and media without unreasonable delay
-    
+
     const hhsNotification = {
       submissionDate: new Date(),
       coveredEntity: this.configService.get('ORGANIZATION_NAME'),
@@ -61,7 +65,7 @@ export class BreachNotificationService {
 
     // Send to HHS (this would be an actual API call)
     console.log('HHS Breach Notification:', hhsNotification);
-    
+
     // Media notification for large breaches
     if (breachData.affectedIndividuals >= 500) {
       const mediaNotification = {
@@ -69,12 +73,14 @@ export class BreachNotificationService {
         affectedCount: breachData.affectedIndividuals,
         contactInfo: this.configService.get('MEDIA_CONTACT_INFO'),
       };
-      
+
       console.log('Media Notification:', mediaNotification);
     }
   }
 
-  private async notifyAffectedIndividuals(breachData: BreachNotificationData): Promise<void> {
+  private async notifyAffectedIndividuals(
+    breachData: BreachNotificationData,
+  ): Promise<void> {
     // Individual notifications must be sent within 60 days
     const notification = {
       subject: 'Important Notice Regarding Your Healthcare Information',
@@ -86,7 +92,9 @@ export class BreachNotificationService {
     console.log('Individual Notification Prepared:', notification);
   }
 
-  private generateIndividualNotificationText(breachData: BreachNotificationData): string {
+  private generateIndividualNotificationText(
+    breachData: BreachNotificationData,
+  ): string {
     return `
 Dear Patient,
 
@@ -108,7 +116,10 @@ Privacy Officer
     `.trim();
   }
 
-  private async documentBreachNotification(incidentId: string, breachData: BreachNotificationData): Promise<void> {
+  private async documentBreachNotification(
+    incidentId: string,
+    breachData: BreachNotificationData,
+  ): Promise<void> {
     // Document all breach notification activities for compliance
     const documentation = {
       incidentId,

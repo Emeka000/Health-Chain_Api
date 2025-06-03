@@ -1,32 +1,43 @@
-import { IsString, IsEnum, IsNumber, IsObject, IsOptional, IsEmail, IsArray } from "class-validator"
-import { ApiProperty } from "@nestjs/swagger"
-import { SpecialtyType } from "../../../common/enums"
+import {
+  IsString,
+  IsEnum,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsEmail,
+  IsArray,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { SpecialtyType } from '../../../common/enums';
 
 export class CreateDepartmentDto {
-  @ApiProperty({ example: "Intensive Care Unit" })
+  @ApiProperty({ example: 'Intensive Care Unit' })
   @IsString()
-  name: string
+  name: string;
 
-  @ApiProperty({ example: "ICU" })
+  @ApiProperty({ example: 'ICU' })
   @IsString()
-  code: string
+  code: string;
 
-  @ApiProperty({ example: "Critical care unit for intensive patient monitoring", required: false })
+  @ApiProperty({
+    example: 'Critical care unit for intensive patient monitoring',
+    required: false,
+  })
   @IsOptional()
   @IsString()
-  description?: string
+  description?: string;
 
   @ApiProperty({ enum: SpecialtyType, example: SpecialtyType.ICU })
   @IsEnum(SpecialtyType)
-  specialty: SpecialtyType
+  specialty: SpecialtyType;
 
   @ApiProperty({ example: 30 })
   @IsNumber()
-  capacity: number
+  capacity: number;
 
   @ApiProperty({ example: 25 })
   @IsNumber()
-  currentCensus: number
+  currentCensus: number;
 
   @ApiProperty({
     example: {
@@ -53,43 +64,43 @@ export class CreateDepartmentDto {
   @IsObject()
   staffingRequirements: {
     dayShift: {
-      registeredNurses: number
-      licensedPracticalNurses: number
-      certifiedNursingAssistants: number
-      supportStaff: number
-    }
+      registeredNurses: number;
+      licensedPracticalNurses: number;
+      certifiedNursingAssistants: number;
+      supportStaff: number;
+    };
     eveningShift: {
-      registeredNurses: number
-      licensedPracticalNurses: number
-      certifiedNursingAssistants: number
-      supportStaff: number
-    }
+      registeredNurses: number;
+      licensedPracticalNurses: number;
+      certifiedNursingAssistants: number;
+      supportStaff: number;
+    };
     nightShift: {
-      registeredNurses: number
-      licensedPracticalNurses: number
-      certifiedNursingAssistants: number
-      supportStaff: number
-    }
-  }
+      registeredNurses: number;
+      licensedPracticalNurses: number;
+      certifiedNursingAssistants: number;
+      supportStaff: number;
+    };
+  };
 
-  @ApiProperty({ example: "Dr. Sarah Johnson" })
+  @ApiProperty({ example: 'Dr. Sarah Johnson' })
   @IsString()
-  managerName: string
+  managerName: string;
 
-  @ApiProperty({ example: "sarah.johnson@hospital.com" })
+  @ApiProperty({ example: 'sarah.johnson@hospital.com' })
   @IsEmail()
-  managerEmail: string
+  managerEmail: string;
 
-  @ApiProperty({ example: "Floor 3, Wing A" })
+  @ApiProperty({ example: 'Floor 3, Wing A' })
   @IsString()
-  location: string
+  location: string;
 
   @ApiProperty({
     example: [
       {
-        name: "Ventilator",
+        name: 'Ventilator',
         quantity: 10,
-        status: "available",
+        status: 'available',
       },
     ],
     required: false,
@@ -97,8 +108,8 @@ export class CreateDepartmentDto {
   @IsOptional()
   @IsArray()
   equipment?: {
-    name: string
-    quantity: number
-    status: "available" | "in_use" | "maintenance" | "out_of_order"
-  }[]
+    name: string;
+    quantity: number;
+    status: 'available' | 'in_use' | 'maintenance' | 'out_of_order';
+  }[];
 }

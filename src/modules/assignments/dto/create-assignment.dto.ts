@@ -1,47 +1,54 @@
-import { IsString, IsEnum, IsDateString, IsOptional, IsObject, IsNumber } from "class-validator"
-import { ApiProperty } from "@nestjs/swagger"
-import { AssignmentType, Priority } from "../../../common/enums"
+import {
+  IsString,
+  IsEnum,
+  IsDateString,
+  IsOptional,
+  IsObject,
+  IsNumber,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { AssignmentType, Priority } from '../../../common/enums';
 
 export class CreateAssignmentDto {
-  @ApiProperty({ example: "nurse-uuid" })
+  @ApiProperty({ example: 'nurse-uuid' })
   @IsString()
-  nurseId: string
+  nurseId: string;
 
-  @ApiProperty({ example: "patient-uuid", required: false })
+  @ApiProperty({ example: 'patient-uuid', required: false })
   @IsOptional()
   @IsString()
-  patientId?: string
+  patientId?: string;
 
-  @ApiProperty({ example: "department-uuid", required: false })
+  @ApiProperty({ example: 'department-uuid', required: false })
   @IsOptional()
   @IsString()
-  departmentId?: string
+  departmentId?: string;
 
   @ApiProperty({ enum: AssignmentType, example: AssignmentType.PATIENT })
   @IsEnum(AssignmentType)
-  assignmentType: AssignmentType
+  assignmentType: AssignmentType;
 
   @ApiProperty({ enum: Priority, example: Priority.MEDIUM })
   @IsEnum(Priority)
-  priority: Priority
+  priority: Priority;
 
-  @ApiProperty({ example: "2024-01-15T07:00:00Z" })
+  @ApiProperty({ example: '2024-01-15T07:00:00Z' })
   @IsDateString()
-  startTime: string
+  startTime: string;
 
-  @ApiProperty({ example: "2024-01-15T19:00:00Z", required: false })
+  @ApiProperty({ example: '2024-01-15T19:00:00Z', required: false })
   @IsOptional()
   @IsDateString()
-  endTime?: string
+  endTime?: string;
 
-  @ApiProperty({ example: "Special care instructions", required: false })
+  @ApiProperty({ example: 'Special care instructions', required: false })
   @IsOptional()
   @IsString()
-  assignmentNotes?: string
+  assignmentNotes?: string;
 
-  @ApiProperty({ example: 1.5, description: "Workload complexity factor" })
+  @ApiProperty({ example: 1.5, description: 'Workload complexity factor' })
   @IsNumber()
-  workloadWeight: number
+  workloadWeight: number;
 
   @ApiProperty({
     example: {
@@ -59,14 +66,14 @@ export class CreateAssignmentDto {
   @IsOptional()
   @IsObject()
   careRequirements?: {
-    medicationAdministration: boolean
-    vitalSignsMonitoring: boolean
-    mobilityAssistance: boolean
-    woundCare: boolean
-    ivTherapy: boolean
-    specialDiet: boolean
-    isolationPrecautions: boolean
-    fallRisk: boolean
-    other?: string[]
-  }
+    medicationAdministration: boolean;
+    vitalSignsMonitoring: boolean;
+    mobilityAssistance: boolean;
+    woundCare: boolean;
+    ivTherapy: boolean;
+    specialDiet: boolean;
+    isolationPrecautions: boolean;
+    fallRisk: boolean;
+    other?: string[];
+  };
 }

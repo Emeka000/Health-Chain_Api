@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { Bill } from './bill.entity';
 import { Patient } from './patient.entity';
 
@@ -8,14 +16,14 @@ export enum PaymentMethod {
   DEBIT_CARD = 'debit_card',
   BANK_TRANSFER = 'bank_transfer',
   INSURANCE = 'insurance',
-  CHECK = 'check'
+  CHECK = 'check',
 }
 
 export enum PaymentStatus {
   PENDING = 'pending',
   COMPLETED = 'completed',
   FAILED = 'failed',
-  REFUNDED = 'refunded'
+  REFUNDED = 'refunded',
 }
 
 @Entity('payments')
@@ -53,11 +61,11 @@ export class Payment {
   @Column({ name: 'patient_id' })
   patientId: string;
 
-  @ManyToOne(() => Bill, bill => bill.payments)
+  @ManyToOne(() => Bill, (bill) => bill.payments)
   @JoinColumn({ name: 'bill_id' })
   bill: Bill;
 
-  @ManyToOne(() => Patient, patient => patient)
+  @ManyToOne(() => Patient, (patient) => patient)
   @JoinColumn({ name: 'patient_id' })
   patient: Patient;
 

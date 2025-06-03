@@ -3,7 +3,6 @@
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('appointments')
 export class AppointmentsController {
-  
   @Post()
   @Roles('doctor', 'nurse', 'admin', 'receptionist')
   @ApiOperation({
@@ -16,7 +15,7 @@ export class AppointmentsController {
       - Appointments must be scheduled at least 1 hour in advance
       - No double-booking validation applied
       - Automatic confirmation for established patients
-    `
+    `,
   })
   @ApiResponse({
     status: 201,
@@ -29,14 +28,14 @@ export class AppointmentsController {
         startDateTime: '2024-06-15T14:30:00.000Z',
         endDateTime: '2024-06-15T15:30:00.000Z',
         status: 'booked',
-        confirmationNumber: 'CONF-2024-567890'
-      }
-    }
+        confirmationNumber: 'CONF-2024-567890',
+      },
+    },
   })
   async createAppointment(@Body() createAppointmentDto: CreateAppointmentDto) {
     return {
       message: 'Appointment creation endpoint - Implementation required',
-      appointmentData: createAppointmentDto
+      appointmentData: createAppointmentDto,
     };
   }
 }

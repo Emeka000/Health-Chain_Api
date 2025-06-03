@@ -1,9 +1,15 @@
-import { Controller, Get, Post, Body, Param, NotFoundException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Patient } from '../entities/patient.entity';
 import { Prescription } from '../entities/prescription.entity';
-
 
 export interface CreatePatientDto {
   firstName: string;
@@ -32,7 +38,7 @@ export class PatientController {
   @Get()
   async findAll(): Promise<Patient[]> {
     return await this.patientRepository.find({
-      relations: ['prescriptions']
+      relations: ['prescriptions'],
     });
   }
 
@@ -40,7 +46,11 @@ export class PatientController {
   async findOne(@Param('id') id: string): Promise<Patient> {
     const patient = await this.patientRepository.findOne({
       where: { id },
-      relations: ['prescriptions', 'prescriptions.items', 'prescriptions.items.drug']
+      relations: [
+        'prescriptions',
+        'prescriptions.items',
+        'prescriptions.items.drug',
+      ],
     });
 
     if (!patient) {
@@ -51,7 +61,9 @@ export class PatientController {
   }
 
   @Get(':id/prescriptions')
-  async getPatientPrescriptions(@Param('id') id: string): Promise<Prescription[]> {
+  async getPatientPrescriptions(
+    @Param('id') id: string,
+  ): Promise<Prescription[]> {
     const patient = await this.findOne(id);
     return patient.prescriptions;
   }

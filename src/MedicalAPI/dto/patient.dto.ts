@@ -1,11 +1,20 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { IsString, IsEmail, IsOptional, IsDateString, IsEnum, IsUUID, Length, Matches } from 'class-validator';
+import {
+  IsString,
+  IsEmail,
+  IsOptional,
+  IsDateString,
+  IsEnum,
+  IsUUID,
+  Length,
+  Matches,
+} from 'class-validator';
 
 export enum GenderType {
   MALE = 'male',
   FEMALE = 'female',
   OTHER = 'other',
-  UNKNOWN = 'unknown'
+  UNKNOWN = 'unknown',
 }
 
 export class CreatePatientDto {
@@ -16,7 +25,7 @@ export class CreatePatientDto {
     maxLength: 50,
     type: String,
     required: true,
-    security: 'PHI - Requires appropriate authorization'
+    security: 'PHI - Requires appropriate authorization',
   })
   @IsString()
   @Length(1, 50)
@@ -29,7 +38,7 @@ export class CreatePatientDto {
     maxLength: 50,
     type: String,
     required: true,
-    security: 'PHI - Requires appropriate authorization'
+    security: 'PHI - Requires appropriate authorization',
   })
   @IsString()
   @Length(1, 50)
@@ -41,16 +50,17 @@ export class CreatePatientDto {
     type: String,
     format: 'date',
     required: true,
-    security: 'PHI - Age calculated, DOB protected'
+    security: 'PHI - Age calculated, DOB protected',
   })
   @IsDateString()
   dateOfBirth: string;
 
   @ApiProperty({
-    description: 'Patient gender following FHIR R4 AdministrativeGender ValueSet',
+    description:
+      'Patient gender following FHIR R4 AdministrativeGender ValueSet',
     enum: GenderType,
     example: GenderType.MALE,
-    required: true
+    required: true,
   })
   @IsEnum(GenderType)
   gender: GenderType;
@@ -60,7 +70,7 @@ export class CreatePatientDto {
     example: 'patient@example.com',
     type: String,
     format: 'email',
-    security: 'PHI - Contact information protected'
+    security: 'PHI - Contact information protected',
   })
   @IsOptional()
   @IsEmail()
@@ -70,7 +80,7 @@ export class CreatePatientDto {
     description: 'Patient phone number (PHI - Protected Contact Information)',
     example: '(555) 123-4567',
     pattern: '^\\([0-9]{3}\\) [0-9]{3}-[0-9]{4}$',
-    security: 'PHI - Contact information protected'
+    security: 'PHI - Contact information protected',
   })
   @IsOptional()
   @Matches(/^\([0-9]{3}\) [0-9]{3}-[0-9]{4}$/)
@@ -79,7 +89,7 @@ export class CreatePatientDto {
   @ApiPropertyOptional({
     description: 'Medical Record Number (MRN) - Unique patient identifier',
     example: 'MRN-2024-001234',
-    pattern: '^MRN-[0-9]{4}-[0-9]{6}$'
+    pattern: '^MRN-[0-9]{4}-[0-9]{6}$',
   })
   @IsOptional()
   @Matches(/^MRN-[0-9]{4}-[0-9]{6}$/)

@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Query, BadRequestException } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Query,
+  BadRequestException,
+} from '@nestjs/common';
 import { Drug } from '../entities/drug.entity';
 import { DrugService, CreateDrugDto } from '../services/drug.service';
 
@@ -19,7 +27,9 @@ export class DrugController {
   @Get('search')
   async search(@Query('q') query: string): Promise<Drug[]> {
     if (!query || query.trim().length < 2) {
-      throw new BadRequestException('Search query must be at least 2 characters');
+      throw new BadRequestException(
+        'Search query must be at least 2 characters',
+      );
     }
     return await this.drugService.searchDrugs(query);
   }
@@ -35,8 +45,12 @@ export class DrugController {
   }
 
   @Post('check-interactions')
-  async checkInteractions(@Body() body: { drugIds: string[] }): Promise<{ interactions: string[] }> {
-    const interactions = await this.drugService.checkDrugInteractions(body.drugIds);
+  async checkInteractions(
+    @Body() body: { drugIds: string[] },
+  ): Promise<{ interactions: string[] }> {
+    const interactions = await this.drugService.checkDrugInteractions(
+      body.drugIds,
+    );
     return { interactions };
   }
 }

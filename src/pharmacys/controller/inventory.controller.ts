@@ -1,14 +1,19 @@
 import { Controller, Get, Post, Put, Body, Param, Query } from '@nestjs/common';
 import { InventoryItem } from '../entities/inventory-item.entity';
-import { InventoryService, CreateInventoryItemDto, UpdateInventoryDto } from '../services/inventory.service';
-
+import {
+  InventoryService,
+  CreateInventoryItemDto,
+  UpdateInventoryDto,
+} from '../services/inventory.service';
 
 @Controller('inventory')
 export class InventoryController {
   constructor(private readonly inventoryService: InventoryService) {}
 
   @Post()
-  async addItem(@Body() createDto: CreateInventoryItemDto): Promise<InventoryItem> {
+  async addItem(
+    @Body() createDto: CreateInventoryItemDto,
+  ): Promise<InventoryItem> {
     return await this.inventoryService.addInventoryItem(createDto);
   }
 
@@ -36,18 +41,18 @@ export class InventoryController {
   @Put(':id')
   async update(
     @Param('id') id: string,
-    @Body() updateDto: UpdateInventoryDto
+    @Body() updateDto: UpdateInventoryDto,
   ): Promise<InventoryItem> {
     return await this.inventoryService.updateInventory(id, updateDto);
   }
 
   @Post('check-availability')
   async checkAvailability(
-    @Body() body: { drugId: string; quantity: number }
+    @Body() body: { drugId: string; quantity: number },
   ): Promise<{ available: boolean }> {
     const available = await this.inventoryService.checkAvailability(
       body.drugId,
-      body.quantity
+      body.quantity,
     );
     return { available };
   }

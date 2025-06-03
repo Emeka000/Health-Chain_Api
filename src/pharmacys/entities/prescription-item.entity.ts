@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 import { Prescription } from './prescription.entity';
 import { Drug } from './drug.entity';
 
@@ -7,13 +14,13 @@ export class PrescriptionItem {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Prescription, prescription => prescription.items)
+  @ManyToOne(() => Prescription, (prescription) => prescription.items)
   prescription: Prescription;
 
   @Column()
   prescriptionId: string;
 
-  @ManyToOne(() => Drug, drug => drug.prescriptionItems)
+  @ManyToOne(() => Drug, (drug) => drug.prescriptionItems)
   drug: Drug;
 
   @Column()

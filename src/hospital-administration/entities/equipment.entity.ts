@@ -1,5 +1,5 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { Department } from "./department.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Department } from './department.entity';
 
 @Entity()
 export class Equipment {
@@ -12,7 +12,6 @@ export class Equipment {
   @Column()
   quantity: number;
 
-  @ManyToOne
-  (() => Department, department => department.equipment)
+  @ManyToOne(() => Department, (department) => department.equipment)
   department: Department;
 }

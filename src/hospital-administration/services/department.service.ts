@@ -114,4 +114,22 @@ export class DepartmentService {
       utilizationRate: totalBeds > 0 ? (occupiedBeds / totalBeds) * 100 : 0,
     };
   }
+
+  async updatePerformance(deptId: number) {
+    const department = await this.departmentRepository.findOne({
+      where: { id: deptId },
+      relations: ['wards', 'wards.rooms', 'wards.rooms.beds']
+    });
+  
+    const allBeds = department.wards.flatMap(ward =>
+      ward.rooms.flatMap(room => room.beds)
+    );
+  
+    const usedBeds = allBeds.filter(bed => !bed.isAvailable).length;
+    const usageRate = (usedBeds / allBeds.length) * 100;
+  
+    department.performanceScore = Math.round(usageRate);
+    return this.departmentRepository.save(department);
+  }
+  
 }

@@ -2,6 +2,9 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { Hospital } from './hospital.entity';
 import { Staff } from './staff.entity';
 import { Bed } from './bed.entity';
+import { Ward } from './ward.entity';
+import { Equipment } from './equipment.entity';
+import { Workflow } from './workflow.entity';
 
 @Entity('departments')
 export class Department {
@@ -38,6 +41,23 @@ export class Department {
 
   @OneToMany(() => Bed, bed => bed.department)
   beds: Bed[];
+
+  @OneToMany(() => Ward, ward => ward.department)
+  wards: Ward[];
+
+  @OneToMany(() => Equipment, equipment => equipment.department)
+  equipment: Equipment[];
+
+  @OneToMany(() => Workflow, workflow => workflow.department)
+workflows: Workflow[];
+
+
+  @Column({ default: 0 })
+  performanceScore: number;
+
+  @Column('text', { array: true })
+  specialties: string[];
+
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

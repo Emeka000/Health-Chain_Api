@@ -180,4 +180,21 @@ export class BedService {
       take: query.limit || 50,
     });
   }
+
+  async assignBed(bedId: number): Promise<Bed> {
+    const bed = await this.bedRepository.findOne({ where: { id: bedId } });
+    if (!bed || !bed.isAvailable) throw new Error('Bed not available');
+  
+    bed.isAvailable = false;
+    return this.bedRepository.save(bed);
+  }
+  
+  async releaseBed(bedId: number): Promise<Bed> {
+    const bed = await this.bedRepository.findOne({ where: { id: bedId } });
+    if (!bed) throw new Error('Bed not found');
+  
+    bed.isAvailable = true;
+    return this.bedRepository.save(bed);
+  }
+  
 }

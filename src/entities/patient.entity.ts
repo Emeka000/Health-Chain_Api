@@ -1,70 +1,53 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { User } from './user.entity';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn } from 'typeorm';
+import { HealthRecord } from './health-record.entity';
+import { Appointment } from './appointment.entity';
+import { MedicationReminder } from './medication-reminder.entity';
+import { HealthMetric } from './health-metric.entity';
 
-export enum BloodType {
-  A_POSITIVE = 'A+',
-  A_NEGATIVE = 'A-',
-  B_POSITIVE = 'B+',
-  B_NEGATIVE = 'B-',
-  AB_POSITIVE = 'AB+',
-  AB_NEGATIVE = 'AB-',
-  O_POSITIVE = 'O+',
-  O_NEGATIVE = 'O-'
-}
-
-@Entity('patients')
+@Entity()
 export class Patient {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
-  @Column({ unique: true, length: 10 })
-  mrn: string; // Medical Record Number
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
+  firstName: string;
+
+  @Column()
+  lastName: string;
+
+  @Column({ unique: true })
+  email: string;
+
+  @Column()
+  password: string;
+
+  @Column()
+  phoneNumber: string;
+
+  @Column({ type: 'date' })
   dateOfBirth: Date;
 
   @Column()
   gender: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   address: string;
 
-  @Column({ nullable: true })
-  emergencyContactName: string;
-
-  @Column({ nullable: true })
-  emergencyContactPhone: string;
-
-  @Column({
-    type: 'enum',
-    enum: BloodType,
-    nullable: true
-  })
-  bloodType: BloodType;
-
-  @Column({ type: 'text', nullable: true })
-  allergies: string;
-
-  @Column({ type: 'text', nullable: true })
-  medicalHistory: string;
-
-  @Column({ nullable: true })
-  insuranceProvider: string;
-
-  @Column({ nullable: true })
-  insurancePolicyNumber: string;
+  @Column({ default: true })
+  isActive: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn()
-  updatedAt: Date;
+  @OneToMany(() => HealthRecord, record => record.patient)
+  healthRecords: HealthRecord[];
 
-  // Relations
-  @OneToOne(() => User, user => user.patient)
-  @JoinColumn()
-  user: User;
+  @OneToMany(() => Appointment, appointment => appointment.patient)
+  appointments: Appointment[];
 
-  @Column()
-  userId: string;
+  @OneToMany(() => MedicationReminder, reminder => reminder.patient)
+  medicationReminders: MedicationReminder[];
+
+  @OneToMany(() => HealthMetric, metric => metric.patient)
+  healthMetrics: HealthMetric[];
 }

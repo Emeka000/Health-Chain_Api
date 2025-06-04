@@ -47,6 +47,7 @@ import { RoleModule } from './role/role.module';
 import { FhirModule } from './fhir/fhir.module';
 import { ConsentModule } from './consent/consent.module';
 import { EncryptionModule } from './modules/encryption/encryption.module';
+import { PatientManagementModule } from './patient-management/patient-management.module';
 
 @Module({
   imports: [
@@ -117,6 +118,7 @@ import { EncryptionModule } from './modules/encryption/encryption.module';
     ConsentModule,
     EncryptionModule,
     PrescriptionsModule,
+    PatientManagementModule,
   ],
   controllers: [AppController],
   providers: [AppService, EncryptionService, AuditService],

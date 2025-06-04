@@ -94,3 +94,40 @@ export enum Priority {
   HIGH = 'high',
   CRITICAL = 'critical',
 }
+
+export enum BloodType {
+  A_POSITIVE = 'A+',
+  A_NEGATIVE = 'A-',
+  B_POSITIVE = 'B+',
+  B_NEGATIVE = 'B-',
+  AB_POSITIVE = 'AB+',
+  AB_NEGATIVE = 'AB-',
+  O_POSITIVE = 'O+',
+  O_NEGATIVE = 'O-',
+  UNKNOWN = 'Unknown',
+}
+
+export enum MaritalStatus {
+  SINGLE = 'single',
+  MARRIED = 'married',
+  DIVORCED = 'divorced',
+  WIDOWED = 'widowed',
+  SEPARATED = 'separated',
+  DOMESTIC_PARTNERSHIP = 'domestic_partnership',
+  OTHER = 'other',
+}
+
+export enum LanguagePreference {
+  ENGLISH = 'english',
+  SPANISH = 'spanish',
+  FRENCH = 'french',
+  GERMAN = 'german',
+  CHINESE = 'chinese',
+  JAPANESE = 'japanese',
+  KOREAN = 'korean',
+  RUSSIAN = 'russian',
+  ARABIC = 'arabic',
+  HINDI = 'hindi',
+  PORTUGUESE = 'portuguese',
+  OTHER = 'other',
+}

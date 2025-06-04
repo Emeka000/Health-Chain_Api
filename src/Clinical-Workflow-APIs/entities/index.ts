@@ -1,0 +1,10 @@
+export { Diagnosis } from './diagnosis.entity';
+export { TreatmentPlan } from './treatment-plan.entity';
+export { Prescription } from './prescription.entity';
+export { Medication } from './medication.entity';
+export { ClinicalNote } from './clinical-note.entity';
+export { MedicalProcedure } from './medical-procedure.entity';
+export { Surgery } from './surgery.entity';
+export { ClinicalAlert } from './clinical-alert.entity';
+export { CarePlan } from './care-plan.entity';
+export { TreatmentTracking } from './treatment-tracking.entity';

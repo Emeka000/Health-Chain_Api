@@ -42,4 +42,9 @@ export class AppointmentService {
       order: { appointmentDate: 'ASC' },
     });
   }
+
+  async resheduleAppointment(appointmentId: number, newDate: Date) {
+    await this.appointmentRepository.update(appointmentId, { appointmentDate: newDate });
+    return this.appointmentRepository.findOne({ where: { id: appointmentId } });
+  }
 }

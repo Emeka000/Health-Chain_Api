@@ -1,15 +1,24 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  ManyToOne,
-} from 'typeorm';
-import { Exclude } from 'class-transformer';
-import { UserRole } from '../auth/enum/user-role.enum';
-import { Department } from 'src/medical-staff/entities/department.entity';
-import { Role } from 'src/role/entities/role.entity';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, OneToMany } from 'typeorm';
+import { Patient } from './patient.entity';
+import { MedicalLicense } from './medical-license.entity';
+
+export enum UserRole {
+  PATIENT = 'patient',
+  NURSE = 'nurse',
+  DOCTOR = 'doctor',
+  SPECIALIST = 'specialist',
+  ADMIN = 'admin',
+  PHARMACIST = 'pharmacist',
+  TECHNICIAN = 'technician',
+  RECEPTIONIST = 'receptionist'
+}
+
+export enum UserStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  SUSPENDED = 'suspended',
+  PENDING_VERIFICATION = 'pending_verification'
+}
 
 @Entity('users')
 export class User {
@@ -20,45 +29,54 @@ export class User {
   email: string;
 
   @Column()
+  password: string;
+
+  @Column()
   firstName: string;
 
   @Column()
   lastName: string;
 
   @Column()
-  @Exclude()
-  password: string;
+  phoneNumber: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.BASIC })
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.PATIENT
+  })
   role: UserRole;
 
+  @Column({
+    type: 'enum',
+    enum: UserStatus,
+    default: UserStatus.PENDING_VERIFICATION
+  })
+  status: UserStatus;
+
+  @Column({ nullable: true })
+  employeeId: string;
+
+  @Column({ nullable: true })
+  department: string;
+
+  @Column({ type: 'json', nullable: true })
+  permissions: string[];
+
   @Column({ default: false })
-  isMfaEnabled: boolean;
+  isEmailVerified: boolean;
 
   @Column({ nullable: true })
-  @Exclude()
-  mfaSecret: string;
-
-  @Column({ default: 0 })
-  loginAttempts: number;
+  lastLoginAt: Date;
 
   @Column({ nullable: true })
-  lastLoginAttempt: Date;
+  deactivatedAt: Date;
 
   @Column({ nullable: true })
-  lockoutUntil: Date;
-
-  @Column({ default: false })
-  isLocked: boolean;
+  deactivatedBy: string;
 
   @Column({ nullable: true })
-  lastPasswordChange: Date;
-
-  @Column({ default: true })
-  requiresPasswordChange: boolean;
-
-  @Column({ nullable: true })
-  passwordHistory: string;
+  deactivationReason: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -66,15 +84,10 @@ export class User {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @Column({ default: true })
-  isActive: boolean;
+  // Relations
+  @OneToOne(() => Patient, patient => patient.user, { nullable: true })
+  patient: Patient;
 
-  @Column({ nullable: true })
-  lastLogin: Date;
-
-  @Column({ type: 'jsonb', nullable: true })
-  securityQuestions: { question: string; answer: string }[];
-
-  @ManyToOne(() => Department)
-  department: Department;
+  @OneToMany(() => MedicalLicense, license => license.user)
+  medicalLicenses: MedicalLicense[];
 }

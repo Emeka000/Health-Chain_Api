@@ -1,0 +1,40 @@
+global:
+  smtp_smarthost: 'localhost:587'
+  smtp_from: 'alerts@hospital.local'
+
+route:
+  group_by: ['alertname']
+  group_wait: 10s
+  group_interval: 10s
+  repeat_interval: 1h
+  receiver: 'medical-alerts'
+  routes:
+  - match:
+      severity: critical
+    receiver: 'critical-medical-alerts'
+
+receivers:
+- name: 'medical-alerts'
+  email_configs:
+  - to: 'admin@hospital.local'
+    subject: 'Hospital System Alert: {{ .GroupLabels.alertname }}'
+    body: |
+      Alert: {{ .GroupLabels.alertname }}
+      Severity: {{ .CommonLabels.severity }}
+      Instance: {{ .CommonLabels.instance }}
+      Summary: {{ .CommonAnnotations.summary }}
+      Description: {{ .CommonAnnotations.description }}
+
+- name: 'critical-medical-alerts'
+  email_configs:
+  - to: 'critical@hospital.local'
+    subject: 'CRITICAL Hospital System Alert: {{ .GroupLabels.alertname }}'
+    body: |
+      CRITICAL ALERT - IMMEDIATE ACTION REQUIRED
+      
+      Alert: {{ .GroupLabels.alertname }}
+      Instance: {{ .CommonLabels.instance }}
+      Summary: {{ .CommonAnnotations.summary }}
+      Description: {{ .CommonAnnotations.description }}
+      
+      This is a critical medical system alert requiring immediate attention.

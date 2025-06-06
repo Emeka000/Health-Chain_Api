@@ -1,0 +1,12 @@
+[
+  { "code": "E11.9", "description": "Type 2 diabetes mellitus without complications" },
+  { "code": "I10", "description": "Essential (primary) hypertension" },
+  { "code": "J45.909", "description": "Unspecified asthma, uncomplicated" },
+  { "code": "N39.0", "description": "Urinary tract infection, site not specified" },
+  { "code": "F41.1", "description": "Generalized anxiety disorder" },
+  { "code": "M54.5", "description": "Low back pain" },
+  { "code": "K21.9", "description": "Gastro-esophageal reflux disease without esophagitis" },
+  { "code": "R51", "description": "Headache" },
+  { "code": "J06.9", "description": "Acute upper respiratory infection, unspecified" },
+  { "code": "Z00.00", "description": "General adult medical examination without abnormal findings" }
+]

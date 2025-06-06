@@ -48,6 +48,16 @@ import { FhirModule } from './fhir/fhir.module';
 import { ConsentModule } from './consent/consent.module';
 import { EncryptionModule } from './modules/encryption/encryption.module';
 import { PatientManagementModule } from './patient-management/patient-management.module';
+import { Icd10Module } from './icd10/icd10.module'; 
+import { DiagnosisModule } from './diagnosis/diagnosis.module';
+import { TreatmentPlanModule } from './treatment-plan/treatment.module';
+import { ProcedureModule } from './procedure/procedure.module';
+import { OutcomeModule } from './outcomes/outcome.module'
+import { CarePlanTemplateModule } from './care-plan-template/care-plan-template.module';
+import { DecisionSupportModule } from './decision-support/decision-support.module';
+
+
+
 
 @Module({
   imports: [
@@ -119,6 +129,18 @@ import { PatientManagementModule } from './patient-management/patient-management
     EncryptionModule,
     PrescriptionsModule,
     PatientManagementModule,
+    
+
+    // ✅ Diagnosis & Treatment System Modules
+  Icd10Module,
+  DiagnosisModule,
+  TreatmentPlanModule,
+  ProcedureModule,
+  OutcomeModule,
+  CarePlanTemplateModule,
+  DecisionSupportModule,
+
+
   ],
   controllers: [AppController],
   providers: [AppService, EncryptionService, AuditService],

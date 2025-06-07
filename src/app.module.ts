@@ -55,6 +55,8 @@ import { ProcedureModule } from './procedure/procedure.module';
 import { OutcomeModule } from './outcomes/outcome.module'
 import { CarePlanTemplateModule } from './care-plan-template/care-plan-template.module';
 import { DecisionSupportModule } from './decision-support/decision-support.module';
+import { SurgicalCaseModule } from './src/surgical-case/surgical-case.module';
+import { SurgicalCaseModule } from './surgical-case/surgical-case.module';
 
 
 
@@ -139,6 +141,7 @@ import { DecisionSupportModule } from './decision-support/decision-support.modul
   OutcomeModule,
   CarePlanTemplateModule,
   DecisionSupportModule,
+  SurgicalCaseModule,
 
 
   ],

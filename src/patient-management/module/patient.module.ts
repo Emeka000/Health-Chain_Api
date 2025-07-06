@@ -6,7 +6,7 @@ import { ConsentController } from 'src/consent/consent.controller';
 import { ConsentService } from 'src/consent/consent.service';
 import { Appointment } from 'src/entities/appointment.entity';
 import { Patient } from 'src/entities/patient.entity';
-import { PatientService } from 'src/patient/patient.service';
+import { PatientService } from 'src/patient/services/patient.service';
 import { CommunicationController } from '../controllers/communication.controller';
 import { MedicalRecordController } from '../controllers/medical-record.controller';
 import { PatientController } from '../controllers/patient.controller';

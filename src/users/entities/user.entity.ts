@@ -2,6 +2,8 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { Appointment } from '../../appointments/entities/appointment.entity';
 import { MonitoringData } from '../../monitoring/entities/monitoring-data.entity';
 import { Prescription } from '../../prescriptions/entities/prescription.entity';
+import { Role } from 'src/common/enums/roles.enum';
+import { Department } from 'src/common/enums/department.enum';
 
 export enum UserRole {
   PATIENT = 'patient',
@@ -27,8 +29,18 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column({ type: 'enum', enum: UserRole, default: UserRole.PATIENT })
-  role: UserRole;
+  // @Column({ type: 'enum', enum: UserRole, default: UserRole.PATIENT })
+  // role: UserRole;
+
+   @Column({ type: 'enum', enum: Role })
+  role: Role;
+
+
+  @Column({ type: 'enum', enum: Department })
+  department: Department;
+
+  @Column({ nullable: true })
+  specialty?: string;
 
   @Column({ nullable: true })
   phoneNumber: string;

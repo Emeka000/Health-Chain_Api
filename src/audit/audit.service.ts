@@ -322,4 +322,9 @@ export class AuditService {
 
     this.logger.log(`Cleaned up ${result.affected} old audit log entries`);
   }
+
+    async log(userId: string, patientId: string, action: string, ipAddress: string) {
+    const log = this.auditRepo.create({ userId, patientId, action, ipAddress });
+    return this.auditRepo.save(log);
+  }
 }

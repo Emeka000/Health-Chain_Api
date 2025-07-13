@@ -39,6 +39,16 @@ export class AuditLog {
   @Index()
   userId: string;
 
+  
+  @Column()
+  patientId: string;
+
+  @Column()
+  action: string;
+
+  @Column()
+  ipAddress: string;
+
   @Column({ nullable: true })
   username: string;
 
